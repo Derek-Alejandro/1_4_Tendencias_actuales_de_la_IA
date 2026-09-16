@@ -1,17 +1,31 @@
 // =========================================================
+// IMPORTACIONES
+// =========================================================
+
+import {
+    APP_CONFIG
+} from "./config.js";
+
+
+import {
+    ChatModule
+} from "./chat.js";
+
+
+// =========================================================
 // CONFIGURACIÓN GENERAL
 // =========================================================
 
-const MAX_CHAT_CHARACTERS = 2000;
-
 const MAX_DOCUMENT_SIZE_MB = 10;
 const MAX_IMAGE_SIZE_MB = 10;
+
 
 const ALLOWED_DOCUMENT_EXTENSIONS = [
     "pdf",
     "docx",
     "txt"
 ];
+
 
 const ALLOWED_IMAGE_TYPES = [
     "image/jpeg",
@@ -24,13 +38,16 @@ const ALLOWED_IMAGE_TYPES = [
 // ELEMENTOS GENERALES
 // =========================================================
 
-const moduleButtons = document.querySelectorAll(
-    "[data-module-target]"
-);
+const moduleButtons =
+    document.querySelectorAll(
+        "[data-module-target]"
+    );
 
-const modules = document.querySelectorAll(
-    ".app-module"
-);
+
+const modules =
+    document.querySelectorAll(
+        ".app-module"
+    );
 
 
 // =========================================================
@@ -38,7 +55,10 @@ const modules = document.querySelectorAll(
 // =========================================================
 
 const toastElement =
-    document.getElementById("appToast");
+    document.getElementById(
+        "appToast"
+    );
+
 
 const toast =
     bootstrap.Toast.getOrCreateInstance(
@@ -57,10 +77,12 @@ function showToast(
             "toastTitle"
         );
 
+
     const messageElement =
         document.getElementById(
             "toastMessage"
         );
+
 
     const icon =
         document.getElementById(
@@ -71,6 +93,7 @@ function showToast(
     titleElement.textContent =
         title;
 
+
     messageElement.textContent =
         message;
 
@@ -79,7 +102,9 @@ function showToast(
         "bi me-2";
 
 
-    switch (type) {
+    switch (
+        type
+    ) {
 
         case "success":
 
@@ -208,169 +233,41 @@ moduleButtons.forEach(
 // CHAT
 // =========================================================
 
-const chatInput =
-    document.getElementById(
-        "chatInput"
-    );
+const chatModule =
+    new ChatModule({
 
-const characterCounter =
-    document.getElementById(
-        "characterCounter"
-    );
+        apiBaseUrl:
+            APP_CONFIG.apiBaseUrl,
 
-const btnSendChat =
-    document.getElementById(
-        "btnSendChat"
-    );
+        chatMessages:
+            document.getElementById(
+                "chatMessages"
+            ),
 
-const btnClearChat =
-    document.getElementById(
-        "btnClearChat"
-    );
+        chatInput:
+            document.getElementById(
+                "chatInput"
+            ),
 
+        characterCounter:
+            document.getElementById(
+                "characterCounter"
+            ),
 
-function updateCharacterCounter() {
+        btnSendChat:
+            document.getElementById(
+                "btnSendChat"
+            ),
 
-    const length =
-        chatInput.value.length;
+        btnClearChat:
+            document.getElementById(
+                "btnClearChat"
+            ),
 
+        showToast:
+            showToast
 
-    characterCounter.textContent =
-        `${length} / ${MAX_CHAT_CHARACTERS}`;
-
-
-    if (
-        length >=
-        MAX_CHAT_CHARACTERS
-    ) {
-
-        characterCounter.classList.add(
-            "text-danger"
-        );
-
-    } else {
-
-        characterCounter.classList.remove(
-            "text-danger"
-        );
-
-    }
-
-}
-
-
-function autoResizeTextarea() {
-
-    chatInput.style.height =
-        "auto";
-
-
-    chatInput.style.height =
-        `${Math.min(
-            chatInput.scrollHeight,
-            140
-        )}px`;
-
-}
-
-
-chatInput.addEventListener(
-    "input",
-    () => {
-
-        updateCharacterCounter();
-
-        autoResizeTextarea();
-
-    }
-);
-
-
-chatInput.addEventListener(
-    "keydown",
-    event => {
-
-        if (
-            event.key === "Enter" &&
-            !event.shiftKey
-        ) {
-
-            event.preventDefault();
-
-            prepareChatMessage();
-
-        }
-
-    }
-);
-
-
-btnSendChat.addEventListener(
-    "click",
-    prepareChatMessage
-);
-
-
-function prepareChatMessage() {
-
-    const message =
-        chatInput.value.trim();
-
-
-    if (
-        !message
-    ) {
-
-        showToast(
-            "Mensaje vacío",
-            "Escribe un mensaje antes de enviarlo.",
-            "warning"
-        );
-
-        chatInput.focus();
-
-        return;
-
-    }
-
-
-    /*
-        En el siguiente paso esta función
-        enviará el mensaje al backend.
-
-        Por ahora únicamente comprobamos
-        la interfaz.
-    */
-
-    showToast(
-        "Interfaz lista",
-        "El módulo de chat está preparado. La conexión con OpenAI será el siguiente paso.",
-        "success"
-    );
-
-}
-
-
-btnClearChat.addEventListener(
-    "click",
-    () => {
-
-        chatInput.value =
-            "";
-
-        updateCharacterCounter();
-
-        autoResizeTextarea();
-
-
-        showToast(
-            "Nueva conversación",
-            "El área de conversación está lista.",
-            "info"
-        );
-
-    }
-);
+    });
 
 
 // =========================================================
@@ -382,20 +279,24 @@ const btnVoiceConversation =
         "btnVoiceConversation"
     );
 
+
 const microphoneAnimation =
     document.getElementById(
         "microphoneAnimation"
     );
+
 
 const voiceTitle =
     document.getElementById(
         "voiceTitle"
     );
 
+
 const voiceStatus =
     document.getElementById(
         "voiceStatus"
     );
+
 
 const voiceConnectionBadge =
     document.getElementById(
@@ -406,9 +307,14 @@ const voiceConnectionBadge =
 let microphoneStream =
     null;
 
+
 let microphoneActive =
     false;
 
+
+// =========================================================
+// EVENTO BOTÓN DE VOZ
+// =========================================================
 
 btnVoiceConversation.addEventListener(
     "click",
@@ -431,6 +337,10 @@ btnVoiceConversation.addEventListener(
 );
 
 
+// =========================================================
+// INICIAR MICRÓFONO
+// =========================================================
+
 async function startMicrophone() {
 
     if (
@@ -440,7 +350,10 @@ async function startMicrophone() {
 
         showToast(
             "Micrófono no disponible",
-            "El navegador no permite acceder al micrófono.",
+            (
+                "El navegador no permite acceder " +
+                "al micrófono."
+            ),
             "danger"
         );
 
@@ -452,7 +365,10 @@ async function startMicrophone() {
     try {
 
         voiceStatus.textContent =
-            "Solicitando permiso para utilizar el micrófono...";
+            (
+                "Solicitando permiso para utilizar " +
+                "el micrófono..."
+            );
 
 
         microphoneStream =
@@ -475,7 +391,11 @@ async function startMicrophone() {
 
 
         voiceStatus.textContent =
-            "El acceso al micrófono funciona correctamente. En el siguiente paso conectaremos la conversación con OpenAI.";
+            (
+                "El acceso al micrófono funciona correctamente. " +
+                "Posteriormente conectaremos esta conversación " +
+                "con OpenAI en tiempo real."
+            );
 
 
         voiceConnectionBadge.textContent =
@@ -486,16 +406,18 @@ async function startMicrophone() {
             "badge text-bg-success";
 
 
-        btnVoiceConversation.innerHTML =
-            `
-                <i class="bi bi-stop-circle-fill"></i>
-                Detener micrófono
-            `;
+        btnVoiceConversation.innerHTML = `
+            <i class="bi bi-stop-circle-fill"></i>
+            Detener micrófono
+        `;
 
 
         showToast(
             "Micrófono conectado",
-            "La aplicación tiene acceso al micrófono.",
+            (
+                "La aplicación tiene acceso " +
+                "al micrófono."
+            ),
             "success"
         );
 
@@ -511,17 +433,35 @@ async function startMicrophone() {
         );
 
 
+        microphoneActive =
+            false;
+
+
         voiceTitle.textContent =
             "Acceso denegado";
 
 
         voiceStatus.textContent =
-            "No fue posible utilizar el micrófono. Revisa los permisos del navegador.";
+            (
+                "No fue posible utilizar el micrófono. " +
+                "Revisa los permisos del navegador."
+            );
+
+
+        voiceConnectionBadge.textContent =
+            "Sin acceso";
+
+
+        voiceConnectionBadge.className =
+            "badge text-bg-danger";
 
 
         showToast(
             "Permiso de micrófono",
-            "No fue posible acceder al micrófono.",
+            (
+                "No fue posible acceder " +
+                "al micrófono."
+            ),
             "danger"
         );
 
@@ -529,6 +469,10 @@ async function startMicrophone() {
 
 }
 
+
+// =========================================================
+// DETENER MICRÓFONO
+// =========================================================
 
 function stopMicrophone() {
 
@@ -539,7 +483,11 @@ function stopMicrophone() {
         microphoneStream
             .getTracks()
             .forEach(
-                track => track.stop()
+                track => {
+
+                    track.stop();
+
+                }
             );
 
     }
@@ -547,6 +495,7 @@ function stopMicrophone() {
 
     microphoneStream =
         null;
+
 
     microphoneActive =
         false;
@@ -562,7 +511,10 @@ function stopMicrophone() {
 
 
     voiceStatus.textContent =
-        "Presiona el botón para comprobar el acceso al micrófono.";
+        (
+            "Presiona el botón para comprobar " +
+            "el acceso al micrófono."
+        );
 
 
     voiceConnectionBadge.textContent =
@@ -573,11 +525,10 @@ function stopMicrophone() {
         "badge text-bg-secondary";
 
 
-    btnVoiceConversation.innerHTML =
-        `
-            <i class="bi bi-mic-fill"></i>
-            Iniciar conversación
-        `;
+    btnVoiceConversation.innerHTML = `
+        <i class="bi bi-mic-fill"></i>
+        Iniciar conversación
+    `;
 
 }
 
@@ -591,35 +542,42 @@ const documentDropZone =
         "documentDropZone"
     );
 
+
 const documentInput =
     document.getElementById(
         "documentInput"
     );
+
 
 const btnSelectDocument =
     document.getElementById(
         "btnSelectDocument"
     );
 
+
 const documentSelected =
     document.getElementById(
         "documentSelected"
     );
+
 
 const documentFileName =
     document.getElementById(
         "documentFileName"
     );
 
+
 const documentFileSize =
     document.getElementById(
         "documentFileSize"
     );
 
+
 const btnRemoveDocument =
     document.getElementById(
         "btnRemoveDocument"
     );
+
 
 const btnTranslateDocument =
     document.getElementById(
@@ -630,6 +588,10 @@ const btnTranslateDocument =
 let selectedDocument =
     null;
 
+
+// =========================================================
+// SELECCIONAR DOCUMENTO
+// =========================================================
 
 btnSelectDocument.addEventListener(
     "click",
@@ -659,11 +621,23 @@ documentInput.addEventListener(
 );
 
 
+// =========================================================
+// ELIMINAR DOCUMENTO
+// =========================================================
+
 btnRemoveDocument.addEventListener(
     "click",
-    removeDocument
+    () => {
+
+        removeDocument();
+
+    }
 );
 
+
+// =========================================================
+// TRADUCIR DOCUMENTO
+// =========================================================
 
 btnTranslateDocument.addEventListener(
     "click",
@@ -673,14 +647,35 @@ btnTranslateDocument.addEventListener(
             !selectedDocument
         ) {
 
+            showToast(
+                "Archivo no seleccionado",
+                (
+                    "Selecciona un documento antes " +
+                    "de continuar."
+                ),
+                "warning"
+            );
+
             return;
 
         }
 
 
+        /*
+        Más adelante este botón llamará:
+
+        POST
+        /api/document
+        */
+
+
         showToast(
             "Documento preparado",
-            "El archivo ya pasó las validaciones de la interfaz. Próximamente será enviado al backend.",
+            (
+                "El archivo ya pasó las validaciones. " +
+                "La traducción con IA se implementará " +
+                "en el módulo de documentos."
+            ),
             "success"
         );
 
@@ -689,7 +684,7 @@ btnTranslateDocument.addEventListener(
 
 
 // =========================================================
-// DRAG AND DROP DOCUMENTOS
+// DRAG & DROP DOCUMENTOS
 // =========================================================
 
 [
@@ -703,6 +698,9 @@ btnTranslateDocument.addEventListener(
             event => {
 
                 event.preventDefault();
+
+                event.stopPropagation();
+
 
                 documentDropZone.classList.add(
                     "dragover"
@@ -726,6 +724,9 @@ btnTranslateDocument.addEventListener(
             event => {
 
                 event.preventDefault();
+
+                event.stopPropagation();
+
 
                 documentDropZone.classList.remove(
                     "dragover"
@@ -760,6 +761,10 @@ documentDropZone.addEventListener(
 );
 
 
+// =========================================================
+// PROCESAR DOCUMENTO
+// =========================================================
+
 function processDocument(
     file
 ) {
@@ -778,9 +783,15 @@ function processDocument(
 
         showToast(
             "Formato no permitido",
-            "Solo se permiten documentos PDF, DOCX y TXT.",
+            (
+                "Solo se permiten documentos " +
+                "PDF, DOCX y TXT."
+            ),
             "danger"
         );
+
+        documentInput.value =
+            "";
 
         return;
 
@@ -796,9 +807,16 @@ function processDocument(
 
         showToast(
             "Archivo demasiado grande",
-            `El documento no debe superar ${MAX_DOCUMENT_SIZE_MB} MB.`,
+            (
+                `El documento no debe superar ` +
+                `${MAX_DOCUMENT_SIZE_MB} MB.`
+            ),
             "danger"
         );
+
+
+        documentInput.value =
+            "";
 
         return;
 
@@ -830,12 +848,19 @@ function processDocument(
 
     showToast(
         "Documento seleccionado",
-        "El archivo cumple las validaciones iniciales.",
+        (
+            "El archivo cumple con las " +
+            "validaciones iniciales."
+        ),
         "success"
     );
 
 }
 
+
+// =========================================================
+// QUITAR DOCUMENTO
+// =========================================================
 
 function removeDocument() {
 
@@ -855,6 +880,16 @@ function removeDocument() {
     btnTranslateDocument.disabled =
         true;
 
+
+    showToast(
+        "Documento eliminado",
+        (
+            "El documento seleccionado " +
+            "fue retirado."
+        ),
+        "info"
+    );
+
 }
 
 
@@ -867,35 +902,42 @@ const imageDropZone =
         "imageDropZone"
     );
 
+
 const imageInput =
     document.getElementById(
         "imageInput"
     );
+
 
 const btnSelectImage =
     document.getElementById(
         "btnSelectImage"
     );
 
+
 const imagePreviewContainer =
     document.getElementById(
         "imagePreviewContainer"
     );
+
 
 const imagePreview =
     document.getElementById(
         "imagePreview"
     );
 
+
 const btnRemoveImage =
     document.getElementById(
         "btnRemoveImage"
     );
 
+
 const btnAnalyzeImage =
     document.getElementById(
         "btnAnalyzeImage"
     );
+
 
 const btnGenerateTranslatedImage =
     document.getElementById(
@@ -906,9 +948,14 @@ const btnGenerateTranslatedImage =
 let selectedImage =
     null;
 
+
 let imagePreviewUrl =
     null;
 
+
+// =========================================================
+// SELECCIONAR IMAGEN
+// =========================================================
 
 btnSelectImage.addEventListener(
     "click",
@@ -938,11 +985,23 @@ imageInput.addEventListener(
 );
 
 
+// =========================================================
+// ELIMINAR IMAGEN
+// =========================================================
+
 btnRemoveImage.addEventListener(
     "click",
-    removeImage
+    () => {
+
+        removeImage();
+
+    }
 );
 
+
+// =========================================================
+// ANALIZAR IMAGEN
+// =========================================================
 
 btnAnalyzeImage.addEventListener(
     "click",
@@ -952,20 +1011,44 @@ btnAnalyzeImage.addEventListener(
             !selectedImage
         ) {
 
+            showToast(
+                "Imagen no seleccionada",
+                (
+                    "Selecciona una imagen antes " +
+                    "de continuar."
+                ),
+                "warning"
+            );
+
             return;
 
         }
 
 
+        /*
+        Posteriormente:
+
+        POST
+        /api/image
+        */
+
+
         showToast(
             "Imagen preparada",
-            "La imagen está lista para enviarse a la IA en los siguientes pasos.",
+            (
+                "La imagen está lista para " +
+                "ser enviada a la IA."
+            ),
             "success"
         );
 
     }
 );
 
+
+// =========================================================
+// GENERAR IMAGEN TRADUCIDA
+// =========================================================
 
 btnGenerateTranslatedImage.addEventListener(
     "click",
@@ -975,14 +1058,34 @@ btnGenerateTranslatedImage.addEventListener(
             !selectedImage
         ) {
 
+            showToast(
+                "Imagen no seleccionada",
+                (
+                    "Selecciona una imagen antes " +
+                    "de continuar."
+                ),
+                "warning"
+            );
+
             return;
 
         }
 
 
+        /*
+        Posteriormente:
+
+        POST
+        /api/image/generate
+        */
+
+
         showToast(
             "Generación preparada",
-            "La recreación visual se conectará posteriormente al servicio de generación de imágenes.",
+            (
+                "Posteriormente la IA generará " +
+                "una versión visual traducida."
+            ),
             "info"
         );
 
@@ -991,7 +1094,7 @@ btnGenerateTranslatedImage.addEventListener(
 
 
 // =========================================================
-// DRAG AND DROP IMÁGENES
+// DRAG & DROP IMÁGENES
 // =========================================================
 
 [
@@ -1005,6 +1108,9 @@ btnGenerateTranslatedImage.addEventListener(
             event => {
 
                 event.preventDefault();
+
+                event.stopPropagation();
+
 
                 imageDropZone.classList.add(
                     "dragover"
@@ -1028,6 +1134,9 @@ btnGenerateTranslatedImage.addEventListener(
             event => {
 
                 event.preventDefault();
+
+                event.stopPropagation();
+
 
                 imageDropZone.classList.remove(
                     "dragover"
@@ -1062,6 +1171,10 @@ imageDropZone.addEventListener(
 );
 
 
+// =========================================================
+// PROCESAR IMAGEN
+// =========================================================
+
 function processImage(
     file
 ) {
@@ -1074,9 +1187,16 @@ function processImage(
 
         showToast(
             "Formato no permitido",
-            "Solo se permiten imágenes JPG, PNG y WEBP.",
+            (
+                "Solo se permiten imágenes " +
+                "JPG, JPEG, PNG y WEBP."
+            ),
             "danger"
         );
+
+
+        imageInput.value =
+            "";
 
         return;
 
@@ -1092,9 +1212,16 @@ function processImage(
 
         showToast(
             "Imagen demasiado grande",
-            `La imagen no debe superar ${MAX_IMAGE_SIZE_MB} MB.`,
+            (
+                `La imagen no debe superar ` +
+                `${MAX_IMAGE_SIZE_MB} MB.`
+            ),
             "danger"
         );
+
+
+        imageInput.value =
+            "";
 
         return;
 
@@ -1126,6 +1253,10 @@ function processImage(
         imagePreviewUrl;
 
 
+    imagePreview.alt =
+        `Vista previa de ${file.name}`;
+
+
     imageDropZone.classList.add(
         "d-none"
     );
@@ -1141,12 +1272,12 @@ function processImage(
 
 
     /*
-        El botón de generación se habilitará
-        definitivamente después de analizar
-        correctamente la imagen.
+    Este botón se habilitará definitivamente
+    después de que la IA analice correctamente
+    la imagen.
 
-        Por ahora lo dejamos disponible para
-        comprobar la interfaz.
+    Durante esta etapa lo dejamos habilitado
+    para comprobar la interfaz.
     */
 
     btnGenerateTranslatedImage.disabled =
@@ -1155,12 +1286,19 @@ function processImage(
 
     showToast(
         "Imagen seleccionada",
-        "La imagen cumple las validaciones iniciales.",
+        (
+            "La imagen cumple con las " +
+            "validaciones iniciales."
+        ),
         "success"
     );
 
 }
 
+
+// =========================================================
+// QUITAR IMAGEN
+// =========================================================
 
 function removeImage() {
 
@@ -1179,6 +1317,7 @@ function removeImage() {
         URL.revokeObjectURL(
             imagePreviewUrl
         );
+
 
         imagePreviewUrl =
             null;
@@ -1206,6 +1345,16 @@ function removeImage() {
 
     btnGenerateTranslatedImage.disabled =
         true;
+
+
+    showToast(
+        "Imagen eliminada",
+        (
+            "La imagen seleccionada " +
+            "fue retirada."
+        ),
+        "info"
+    );
 
 }
 
@@ -1238,6 +1387,10 @@ function getFileExtension(
 }
 
 
+// =========================================================
+// VALIDAR TAMAÑO
+// =========================================================
+
 function validateFileSize(
     file,
     maxSizeMB
@@ -1256,6 +1409,10 @@ function validateFileSize(
 
 }
 
+
+// =========================================================
+// FORMATEAR TAMAÑO
+// =========================================================
 
 function formatFileSize(
     bytes
@@ -1280,8 +1437,12 @@ function formatFileSize(
 
     const index =
         Math.floor(
-            Math.log(bytes) /
-            Math.log(1024)
+            Math.log(
+                bytes
+            ) /
+            Math.log(
+                1024
+            )
         );
 
 
@@ -1308,6 +1469,8 @@ window.addEventListener(
     "beforeunload",
     () => {
 
+        // Detener micrófono
+
         if (
             microphoneStream
         ) {
@@ -1315,11 +1478,17 @@ window.addEventListener(
             microphoneStream
                 .getTracks()
                 .forEach(
-                    track => track.stop()
+                    track => {
+
+                        track.stop();
+
+                    }
                 );
 
         }
 
+
+        // Liberar URL temporal de imagen
 
         if (
             imagePreviewUrl
@@ -1339,8 +1508,12 @@ window.addEventListener(
 // INICIALIZACIÓN
 // =========================================================
 
-updateCharacterCounter();
-
 console.log(
     "Traductor Inteligente Multimodal - Interfaz inicializada."
+);
+
+
+console.log(
+    "Backend configurado:",
+    APP_CONFIG.apiBaseUrl
 );

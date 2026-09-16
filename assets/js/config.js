@@ -1,38 +1,31 @@
 /*
 =========================================================
-CONFIGURACIÓN DEL FRONTEND
+CONFIGURACIÓN PÚBLICA DEL FRONTEND
 =========================================================
 
-Este archivo NO debe contener la API Key de OpenAI.
+IMPORTANTE:
 
-La API Key real solamente existirá en el backend
-y posteriormente como Environment Variable en Vercel.
+Este archivo puede estar públicamente en GitHub Pages.
+
+Aquí solamente se almacena la URL pública de nuestro backend.
+
+NUNCA debe contener:
+- OPENAI_API_KEY
+- tokens privados
+- contraseñas
+- secretos
+=========================================================
 */
 
 
-export const APP_CONFIG = {
+export const APP_CONFIG = Object.freeze({
 
-    development: {
+    /*
+    Sustituye esta URL por la URL REAL
+    de tu backend publicado en Vercel.
+    */
 
-        apiBaseUrl:
-            "http://127.0.0.1:8000"
+    apiBaseUrl:
+        "https://1-4-tendencias-actuales-de-la-ia-beta.vercel.app"
 
-    },
-
-    production: {
-
-        /*
-        Posteriormente colocaremos aquí
-        la URL pública de Vercel.
-
-        Ejemplo:
-
-        https://mi-backend.vercel.app
-        */
-
-        apiBaseUrl:
-            ""
-
-    }
-
-};
+});
