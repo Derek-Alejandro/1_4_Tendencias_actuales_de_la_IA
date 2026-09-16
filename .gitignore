@@ -1,0 +1,33 @@
+# Entornos virtuales
+.venv/
+venv/
+
+# Variables privadas
+.env
+.env.local
+.env.development
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Vercel
+.vercel/
+
+# VS Code
+.vscode/
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# Temporales
+temp/
+tmp/
+*.tmp
+
+# Logs
+*.log

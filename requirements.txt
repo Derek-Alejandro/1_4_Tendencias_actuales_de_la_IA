@@ -1,0 +1,7 @@
+openai
+fastapi[standard]
+python-multipart
+python-dotenv
+python-docx
+pypdf
+httpx
