@@ -1,11 +1,5 @@
 import os
 from dataclasses import dataclass
-from dotenv import load_dotenv
-
-
-# Permite utilizar un archivo .env durante desarrollo local.
-# En Vercel se utilizarán directamente las Environment Variables.
-load_dotenv()
 
 
 @dataclass(frozen=True)
@@ -13,8 +7,10 @@ class Settings:
     """
     Configuración general de la aplicación.
 
-    Centraliza variables de entorno para evitar tener valores
-    distribuidos por diferentes archivos del proyecto.
+    Las variables privadas se obtienen directamente
+    del entorno donde se ejecuta el backend.
+
+    En producción serán proporcionadas por Vercel.
     """
 
     openai_api_key: str = os.getenv(
@@ -67,10 +63,6 @@ class Settings:
 
     @property
     def allowed_origins(self) -> list[str]:
-        """
-        Devuelve los dominios autorizados para consumir
-        el backend.
-        """
 
         origins = os.getenv(
             "ALLOWED_ORIGINS",
@@ -89,14 +81,9 @@ class Settings:
 
     @property
     def openai_configured(self) -> bool:
-        """
-        Indica si existe una API Key configurada.
-        Nunca expone el valor de la clave.
-        """
 
         return bool(
             self.openai_api_key
-            and self.openai_api_key != "YOUR_OPENAI_API_KEY"
         )
 
 
