@@ -44,7 +44,7 @@ class RealtimeServiceException(
 
 
 # ==========================================================
-# SERVICIO REALTIME
+# REALTIME SERVICE
 # ==========================================================
 
 class RealtimeService:
@@ -86,64 +86,38 @@ class RealtimeService:
 
 
     # ======================================================
-    # INSTRUCCIONES
+    # PROMPT
     # ======================================================
 
     @staticmethod
     def _instructions() -> str:
 
         return """
-You are a professional real-time bilingual interpreter
-between Spanish and English.
+You are a professional real-time interpreter between
+Spanish and English.
 
-Your only job is to translate the user's spoken words.
+Translate every spoken user turn.
 
-RULES:
+If the user speaks Spanish:
+- translate it naturally into English.
 
-1. Detect automatically whether every new spoken turn is
-   primarily Spanish or English.
+If the user speaks English:
+- translate it naturally into Spanish.
 
-2. If the user speaks Spanish:
-   translate naturally into English.
+Speak only the translation.
 
-3. If the user speaks English:
-   translate naturally into Spanish.
+Do not answer the user's question.
+Do not add advice.
+Do not explain the translation.
+Do not add introductions.
+Do not repeat the original message.
 
-4. SPEAK ONLY the translation.
+Preserve names, numbers, dates, currencies, units,
+acronyms and technical terms correctly.
 
-5. Do not answer questions as an assistant.
+Automatically detect the language of every new turn.
 
-6. Do not give advice.
-
-7. Do not add explanations, introductions, commentary,
-   greetings, or extra information.
-
-8. Preserve names, numbers, dates, times, currencies,
-   technical terms, units and acronyms correctly.
-
-9. Preserve the meaning and tone of the speaker.
-
-10. Prefer a natural translation over a literal
-    word-for-word translation.
-
-11. If the speaker changes language in a later turn,
-    automatically change the target language accordingly.
-
-12. Do not repeat the original sentence before translating.
-
-Examples:
-
-Spanish input:
-"Hola, mañana tengo una reunión a las cinco."
-
-Spoken output:
-"Hello, I have a meeting tomorrow at five."
-
-English input:
-"Where is the nearest train station?"
-
-Spoken output:
-"¿Dónde está la estación de tren más cercana?"
+The spoken output must always be in the opposite language.
 """.strip()
 
 
@@ -177,14 +151,12 @@ Spoken output:
 
                 "input": {
 
-                    "noise_reduction": {
-                        "type":
-                            "near_field"
-                    },
-
                     "transcription": {
+
                         "model":
-                            self.settings.transcription_model
+                            self.settings
+                            .transcription_model
+
                     },
 
                     "turn_detection": {
@@ -212,17 +184,16 @@ Spoken output:
                 "output": {
 
                     "voice":
-                        self.settings.realtime_voice,
+                        self.settings
+                        .realtime_voice
 
-                    "speed":
-                        1.0
                 }
             }
         }
 
 
     # ======================================================
-    # CREAR CONEXIÓN WEBRTC
+    # CREAR SESIÓN WEBRTC
     # ======================================================
 
     def create_webrtc_session(
@@ -244,8 +215,8 @@ Spoken output:
 
             raise RealtimeServiceException(
                 (
-                    "La información de conexión "
-                    "WebRTC está vacía."
+                    "La información WebRTC "
+                    "está vacía."
                 ),
                 400
             )
@@ -281,9 +252,13 @@ Spoken output:
             ) as client:
 
                 response = client.post(
+
                     self.OPENAI_REALTIME_URL,
+
                     headers=headers,
+
                     json=payload
+
                 )
 
 
@@ -298,7 +273,16 @@ Spoken output:
             )
 
 
-        except httpx.RequestError:
+        except httpx.RequestError as error:
+
+            logger.error(
+                (
+                    "Error de conexión con "
+                    "OpenAI Realtime: %s"
+                ),
+                str(error)
+            )
+
 
             raise RealtimeServiceException(
                 (
@@ -310,12 +294,30 @@ Spoken output:
 
 
         # ==================================================
-        # ERRORES OPENAI
+        # DEBUG SEGURO
         # ==================================================
 
         if (
-            response.status_code
-            == 401
+            response.status_code >= 400
+        ):
+
+            logger.error(
+                (
+                    "OpenAI Realtime rechazó "
+                    "la solicitud. "
+                    "Status=%s Body=%s"
+                ),
+                response.status_code,
+                response.text[:1500]
+            )
+
+
+        # ==================================================
+        # AUTENTICACIÓN
+        # ==================================================
+
+        if (
+            response.status_code == 401
         ):
 
             raise RealtimeServiceException(
@@ -327,9 +329,12 @@ Spoken output:
             )
 
 
+        # ==================================================
+        # RATE LIMIT
+        # ==================================================
+
         if (
-            response.status_code
-            == 429
+            response.status_code == 429
         ):
 
             raise RealtimeServiceException(
@@ -341,18 +346,30 @@ Spoken output:
             )
 
 
+        # ==================================================
+        # SOLICITUD INCORRECTA
+        # ==================================================
+
         if (
-            response.status_code
-            >= 400
+            response.status_code == 400
         ):
 
-            logger.error(
+            raise RealtimeServiceException(
                 (
-                    "OpenAI Realtime rechazó "
-                    "la solicitud. Status: %s"
+                    "OpenAI rechazó la configuración "
+                    "de la sesión de voz."
                 ),
-                response.status_code
+                502
             )
+
+
+        # ==================================================
+        # OTRO ERROR
+        # ==================================================
+
+        if (
+            response.status_code >= 400
+        ):
 
             raise RealtimeServiceException(
                 (
@@ -364,7 +381,7 @@ Spoken output:
 
 
         # ==================================================
-        # SDP DE RESPUESTA
+        # SDP ANSWER
         # ==================================================
 
         answer_sdp = (
@@ -378,8 +395,8 @@ Spoken output:
 
             raise RealtimeServiceException(
                 (
-                    "El servicio de voz devolvió "
-                    "una conexión vacía."
+                    "OpenAI devolvió una conexión "
+                    "WebRTC vacía."
                 ),
                 502
             )
