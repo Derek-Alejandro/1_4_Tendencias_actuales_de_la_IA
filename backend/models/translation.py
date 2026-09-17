@@ -81,7 +81,7 @@ class ChatResult(
 
 
 # ==========================================================
-# CHAT - API RESPONSE
+# CHAT - RESPUESTA
 # ==========================================================
 
 class ChatApiResponse(
@@ -94,7 +94,7 @@ class ChatApiResponse(
 
 
 # ==========================================================
-# REALTIME
+# REALTIME - REQUEST
 # ==========================================================
 
 class RealtimeSessionRequest(
@@ -109,7 +109,7 @@ class RealtimeSessionRequest(
 
 
 # ==========================================================
-# DOCUMENTOS - SECCIÓN
+# DOCUMENTOS - SECCIÓN TRADUCIDA
 # ==========================================================
 
 class DocumentSectionResult(
@@ -161,7 +161,7 @@ class DocumentResult(
 
 
 # ==========================================================
-# DOCUMENTOS - API RESPONSE
+# DOCUMENTOS - RESPUESTA API
 # ==========================================================
 
 class DocumentApiResponse(
@@ -171,3 +171,55 @@ class DocumentApiResponse(
     success: bool
 
     data: DocumentResult
+
+
+# ==========================================================
+# DESCARGA - SECCIÓN
+# ==========================================================
+
+class DocumentDownloadSection(
+    BaseModel
+):
+
+    translated_title: str = Field(
+        default="",
+        max_length=1000
+    )
+
+    translated_text: str = Field(
+        ...,
+        min_length=1,
+        max_length=10000
+    )
+
+
+# ==========================================================
+# DESCARGA - REQUEST
+# ==========================================================
+
+class DocumentDownloadRequest(
+    BaseModel
+):
+
+    original_file_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=255
+    )
+
+    file_type: Literal[
+        "txt",
+        "docx",
+        "pdf"
+    ]
+
+    target_language: Literal[
+        "es",
+        "en"
+    ]
+
+    sections: list[
+        DocumentDownloadSection
+    ] = Field(
+        min_length=1
+    )

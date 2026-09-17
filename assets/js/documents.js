@@ -18,10 +18,6 @@ export class DocumentsModule {
         showToast
     }) {
 
-        // =================================================
-        // CONFIGURACIÓN
-        // =================================================
-
         this.apiBaseUrl =
             apiBaseUrl;
 
@@ -66,26 +62,16 @@ export class DocumentsModule {
             showToast;
 
 
-        // =================================================
-        // RESTRICCIONES
-        // =================================================
-
         this.maxSizeMB =
             4;
 
 
         this.allowedExtensions = [
-
             "pdf",
             "docx",
             "txt"
-
         ];
 
-
-        // =================================================
-        // ESTADO
-        // =================================================
 
         this.selectedFile =
             null;
@@ -99,10 +85,6 @@ export class DocumentsModule {
             null;
 
 
-        // =================================================
-        // EVENTOS
-        // =================================================
-
         this.bindEvents();
 
     }
@@ -113,10 +95,6 @@ export class DocumentsModule {
     // =====================================================
 
     bindEvents() {
-
-        // =================================================
-        // SELECCIONAR ARCHIVO
-        // =================================================
 
         this.selectButton.addEventListener(
             "click",
@@ -136,10 +114,6 @@ export class DocumentsModule {
             }
         );
 
-
-        // =================================================
-        // INPUT
-        // =================================================
 
         this.input.addEventListener(
             "change",
@@ -164,10 +138,6 @@ export class DocumentsModule {
         );
 
 
-        // =================================================
-        // ELIMINAR
-        // =================================================
-
         this.removeButton.addEventListener(
             "click",
             () => {
@@ -178,10 +148,6 @@ export class DocumentsModule {
         );
 
 
-        // =================================================
-        // TRADUCIR
-        // =================================================
-
         this.translateButton.addEventListener(
             "click",
             async () => {
@@ -191,10 +157,6 @@ export class DocumentsModule {
             }
         );
 
-
-        // =================================================
-        // DRAG ENTER / OVER
-        // =================================================
 
         [
             "dragenter",
@@ -230,10 +192,6 @@ export class DocumentsModule {
         );
 
 
-        // =================================================
-        // DRAG LEAVE / DROP
-        // =================================================
-
         [
             "dragleave",
             "drop"
@@ -261,10 +219,6 @@ export class DocumentsModule {
             }
         );
 
-
-        // =================================================
-        // DROP
-        // =================================================
 
         this.dropZone.addEventListener(
             "drop",
@@ -302,7 +256,7 @@ export class DocumentsModule {
 
 
     // =====================================================
-    // PROCESAR ARCHIVO
+    // SELECCIONAR ARCHIVO
     // =====================================================
 
     processSelectedFile(
@@ -314,10 +268,6 @@ export class DocumentsModule {
                 file.name
             );
 
-
-        // =================================================
-        // VALIDAR EXTENSIÓN
-        // =================================================
 
         if (
             !this.allowedExtensions
@@ -335,7 +285,8 @@ export class DocumentsModule {
                 "Formato no permitido",
 
                 (
-                    "Selecciona un archivo " +
+                    "Selecciona un archivo "
+                    +
                     "PDF, DOCX o TXT."
                 ),
 
@@ -348,10 +299,6 @@ export class DocumentsModule {
 
         }
 
-
-        // =================================================
-        // VALIDAR TAMAÑO
-        // =================================================
 
         if (
             !this.validateFileSize(
@@ -368,7 +315,8 @@ export class DocumentsModule {
                 "Archivo demasiado grande",
 
                 (
-                    "El documento no debe superar " +
+                    "El documento no debe superar "
+                    +
                     `${this.maxSizeMB} MB.`
                 ),
 
@@ -382,10 +330,6 @@ export class DocumentsModule {
         }
 
 
-        // =================================================
-        // GUARDAR
-        // =================================================
-
         this.selectedFile =
             file;
 
@@ -393,10 +337,6 @@ export class DocumentsModule {
         this.lastResult =
             null;
 
-
-        // =================================================
-        // INFORMACIÓN
-        // =================================================
 
         this.fileName.textContent =
             file.name;
@@ -407,10 +347,6 @@ export class DocumentsModule {
                 file.size
             );
 
-
-        // =================================================
-        // UI
-        // =================================================
 
         this.selectedContainer
             .classList
@@ -431,7 +367,8 @@ export class DocumentsModule {
             "Documento seleccionado",
 
             (
-                "El archivo está listo para " +
+                "El archivo está listo para "
+                +
                 "ser traducido."
             ),
 
@@ -443,7 +380,7 @@ export class DocumentsModule {
 
 
     // =====================================================
-    // TRADUCIR DOCUMENTO
+    // TRADUCIR
     // =====================================================
 
     async translateDocument() {
@@ -466,7 +403,8 @@ export class DocumentsModule {
                 "Archivo no seleccionado",
 
                 (
-                    "Selecciona un documento " +
+                    "Selecciona un documento "
+                    +
                     "antes de traducir."
                 ),
 
@@ -480,10 +418,6 @@ export class DocumentsModule {
         }
 
 
-        // =================================================
-        // ESTADO
-        // =================================================
-
         this.processing =
             true;
 
@@ -494,10 +428,6 @@ export class DocumentsModule {
 
         this.setLoadingState();
 
-
-        // =================================================
-        // FORMDATA
-        // =================================================
 
         const formData =
             new FormData();
@@ -515,10 +445,6 @@ export class DocumentsModule {
 
 
         try {
-
-            // =============================================
-            // BACKEND
-            // =============================================
 
             const response =
                 await fetch(
@@ -541,10 +467,6 @@ export class DocumentsModule {
                 );
 
 
-            // =============================================
-            // RESPUESTA
-            // =============================================
-
             let result;
 
 
@@ -559,7 +481,8 @@ export class DocumentsModule {
 
                 throw new Error(
                     (
-                        "El servidor devolvió una " +
+                        "El servidor devolvió una "
+                        +
                         "respuesta no válida."
                     )
                 );
@@ -567,34 +490,30 @@ export class DocumentsModule {
             }
 
 
-            // =============================================
-            // ERROR HTTP
-            // =============================================
-
             if (
                 !response.ok
             ) {
 
                 throw new Error(
+
+                    result?.detail
+                    ||
                     (
-                        result?.detail ||
-                        (
-                            "No fue posible traducir " +
-                            "el documento."
-                        )
+                        "No fue posible traducir "
+                        +
+                        "el documento."
                     )
+
                 );
 
             }
 
 
-            // =============================================
-            // VALIDAR RESPUESTA
-            // =============================================
-
             if (
-                !result?.success ||
-                !result?.data ||
+                !result?.success
+                ||
+                !result?.data
+                ||
                 !Array.isArray(
                     result.data.sections
                 )
@@ -602,7 +521,8 @@ export class DocumentsModule {
 
                 throw new Error(
                     (
-                        "La respuesta del servidor " +
+                        "La respuesta del servidor "
+                        +
                         "está incompleta."
                     )
                 );
@@ -610,17 +530,9 @@ export class DocumentsModule {
             }
 
 
-            // =============================================
-            // GUARDAR RESULTADO
-            // =============================================
-
             this.lastResult =
                 result.data;
 
-
-            // =============================================
-            // MOSTRAR
-            // =============================================
 
             this.renderResult(
                 result.data
@@ -632,7 +544,8 @@ export class DocumentsModule {
                 "Documento traducido",
 
                 (
-                    "La traducción se generó " +
+                    "La traducción fue generada "
+                    +
                     "correctamente."
                 ),
 
@@ -656,15 +569,19 @@ export class DocumentsModule {
                 null;
 
 
-            const message =
-                (
-                    error instanceof Error
-                        ? error.message
-                        : (
-                            "No fue posible procesar " +
-                            "el documento."
-                        )
-                );
+            const message = (
+
+                error instanceof Error
+
+                    ? error.message
+
+                    : (
+                        "No fue posible procesar "
+                        +
+                        "el documento."
+                    )
+
+            );
 
 
             this.renderError(
@@ -698,7 +615,7 @@ export class DocumentsModule {
 
 
     // =====================================================
-    // ESTADO DE CARGA
+    // LOADING
     // =====================================================
 
     setLoadingState() {
@@ -739,7 +656,7 @@ export class DocumentsModule {
                     >
 
                         <span class="visually-hidden">
-                            Procesando documento...
+                            Procesando...
                         </span>
 
                     </div>
@@ -753,10 +670,9 @@ export class DocumentsModule {
 
 
                 <p>
-                    Estamos extrayendo el contenido,
-                    detectando el idioma y generando
-                    una traducción natural con
-                    Inteligencia Artificial.
+                    Extrayendo contenido, detectando
+                    el idioma y generando la traducción
+                    con Inteligencia Artificial.
                 </p>
 
 
@@ -767,18 +683,14 @@ export class DocumentsModule {
                         Extracción
                     </span>
 
-
                     <i class="bi bi-chevron-right"></i>
-
 
                     <span>
                         <i class="bi bi-translate"></i>
                         Traducción
                     </span>
 
-
                     <i class="bi bi-chevron-right"></i>
-
 
                     <span>
                         <i class="bi bi-check2-circle"></i>
@@ -795,7 +707,7 @@ export class DocumentsModule {
 
 
     // =====================================================
-    // RESTAURAR BOTONES
+    // RESTAURAR CONTROLES
     // =====================================================
 
     restoreButtonState() {
@@ -835,10 +747,6 @@ export class DocumentsModule {
             "";
 
 
-        // =================================================
-        // IDIOMAS
-        // =================================================
-
         const sourceLanguage =
             this.getLanguageLabel(
                 data.source_language
@@ -851,8 +759,17 @@ export class DocumentsModule {
             );
 
 
+        const fileType =
+            String(
+                data.file_type
+                ||
+                "TXT"
+            )
+            .toUpperCase();
+
+
         // =================================================
-        // CABECERA PRINCIPAL
+        // CABECERA
         // =================================================
 
         const header =
@@ -864,10 +781,6 @@ export class DocumentsModule {
         header.className =
             "document-result-top";
 
-
-        // =================================================
-        // INFORMACIÓN DEL ARCHIVO
-        // =================================================
 
         const fileInfo =
             document.createElement(
@@ -913,7 +826,7 @@ export class DocumentsModule {
                         <i class="bi bi-file-earmark"></i>
 
                         ${this.escapeHtml(
-                            data.file_type
+                            fileType
                         )}
 
                     </span>
@@ -924,6 +837,7 @@ export class DocumentsModule {
                         <i class="bi bi-layers"></i>
 
                         ${data.section_count}
+
                         ${
                             data.section_count === 1
                                 ? "sección"
@@ -940,6 +854,7 @@ export class DocumentsModule {
                         ${Number(
                             data.character_count
                         ).toLocaleString("es-MX")}
+
                         caracteres
 
                     </span>
@@ -952,7 +867,7 @@ export class DocumentsModule {
 
 
         // =================================================
-        // BOTONES
+        // ACCIONES
         // =================================================
 
         const actions =
@@ -964,10 +879,6 @@ export class DocumentsModule {
         actions.className =
             "document-result-actions";
 
-
-        // =================================================
-        // COPIAR
-        // =================================================
 
         const copyButton =
             document.createElement(
@@ -1002,10 +913,6 @@ export class DocumentsModule {
         );
 
 
-        // =================================================
-        // DESCARGAR
-        // =================================================
-
         const downloadButton =
             document.createElement(
                 "button"
@@ -1024,16 +931,20 @@ export class DocumentsModule {
 
             <i class="bi bi-download"></i>
 
-            Descargar traducción
+            Descargar ${this.escapeHtml(
+                fileType
+            )}
 
         `;
 
 
         downloadButton.addEventListener(
             "click",
-            () => {
+            async () => {
 
-                this.downloadTranslation();
+                await this.downloadTranslation(
+                    downloadButton
+                );
 
             }
         );
@@ -1058,7 +969,7 @@ export class DocumentsModule {
 
 
         // =================================================
-        // DIRECCIÓN DE TRADUCCIÓN
+        // IDIOMAS
         // =================================================
 
         const direction =
@@ -1078,7 +989,6 @@ export class DocumentsModule {
                 <span class="document-language-flag">
                     ${sourceLanguage.flag}
                 </span>
-
 
                 <div>
 
@@ -1113,7 +1023,6 @@ export class DocumentsModule {
                     ${targetLanguage.flag}
                 </span>
 
-
                 <div>
 
                     <small>
@@ -1138,7 +1047,7 @@ export class DocumentsModule {
 
 
         // =================================================
-        // ENCABEZADO SECCIONES
+        // SECCIONES
         // =================================================
 
         const sectionsHeader =
@@ -1165,7 +1074,6 @@ export class DocumentsModule {
 
             </div>
 
-
             <small>
                 Original y traducción
             </small>
@@ -1178,10 +1086,6 @@ export class DocumentsModule {
                 sectionsHeader
             );
 
-
-        // =================================================
-        // SECCIONES
-        // =================================================
 
         const sectionsContainer =
             document.createElement(
@@ -1199,23 +1103,21 @@ export class DocumentsModule {
                 index
             ) => {
 
-                const sectionElement =
-                    this.createSectionElement(
-
-                        section,
-
-                        sourceLanguage,
-
-                        targetLanguage,
-
-                        index
-
-                    );
-
-
                 sectionsContainer
                     .appendChild(
-                        sectionElement
+
+                        this.createSectionElement(
+
+                            section,
+
+                            sourceLanguage,
+
+                            targetLanguage,
+
+                            index
+
+                        )
+
                     );
 
             }
@@ -1229,7 +1131,7 @@ export class DocumentsModule {
 
 
         // =================================================
-        // NOTA FINAL
+        // FOOTER
         // =================================================
 
         const footer =
@@ -1248,9 +1150,14 @@ export class DocumentsModule {
 
             <span>
 
-                La traducción fue generada mediante
-                Inteligencia Artificial. Revisa información
-                importante antes de utilizarla oficialmente.
+                Puedes descargar la traducción
+                nuevamente como archivo
+                <strong>
+                    ${this.escapeHtml(fileType)}
+                </strong>.
+                La estructura textual se conserva,
+                aunque el diseño puede diferir
+                del original.
 
             </span>
 
@@ -1262,33 +1169,11 @@ export class DocumentsModule {
                 footer
             );
 
-
-        // =================================================
-        // SCROLL
-        // =================================================
-
-        requestAnimationFrame(
-            () => {
-
-                this.resultContainer
-                    .scrollIntoView({
-
-                        behavior:
-                            "smooth",
-
-                        block:
-                            "start"
-
-                    });
-
-            }
-        );
-
     }
 
 
     // =====================================================
-    // CREAR SECCIÓN
+    // CREAR SECCIÓN VISUAL
     // =====================================================
 
     createSectionElement(
@@ -1308,10 +1193,6 @@ export class DocumentsModule {
             "document-section-modern";
 
 
-        // =================================================
-        // HEADER
-        // =================================================
-
         const header =
             document.createElement(
                 "div"
@@ -1322,17 +1203,17 @@ export class DocumentsModule {
             "document-section-modern-header";
 
 
-        const sectionNumber =
+        const number =
             document.createElement(
                 "span"
             );
 
 
-        sectionNumber.className =
+        number.className =
             "document-modern-number";
 
 
-        sectionNumber.textContent =
+        number.textContent =
             String(
                 index + 1
             );
@@ -1356,7 +1237,8 @@ export class DocumentsModule {
 
         originalTitle.textContent =
             (
-                section.title ||
+                section.title
+                ||
                 `Sección ${index + 1}`
             );
 
@@ -1369,7 +1251,8 @@ export class DocumentsModule {
 
         translatedTitle.textContent =
             (
-                section.translated_title ||
+                section.translated_title
+                ||
                 ""
             );
 
@@ -1381,14 +1264,10 @@ export class DocumentsModule {
 
 
         header.append(
-            sectionNumber,
+            number,
             titles
         );
 
-
-        // =================================================
-        // CUERPO
-        // =================================================
 
         const body =
             document.createElement(
@@ -1412,7 +1291,8 @@ export class DocumentsModule {
 
         originalPanel.className =
             (
-                "document-modern-panel " +
+                "document-modern-panel "
+                +
                 "document-original-panel"
             );
 
@@ -1431,7 +1311,12 @@ export class DocumentsModule {
 
             <div>
 
-                <span class="language-dot original-dot"></span>
+                <span
+                    class="
+                        language-dot
+                        original-dot
+                    "
+                ></span>
 
                 <strong>
                     Original
@@ -1439,10 +1324,10 @@ export class DocumentsModule {
 
             </div>
 
-
             <span class="document-panel-language">
 
                 ${sourceLanguage.flag}
+
                 ${sourceLanguage.name}
 
             </span>
@@ -1482,7 +1367,8 @@ export class DocumentsModule {
 
         translatedPanel.className =
             (
-                "document-modern-panel " +
+                "document-modern-panel "
+                +
                 "document-translated-panel"
             );
 
@@ -1501,7 +1387,12 @@ export class DocumentsModule {
 
             <div>
 
-                <span class="language-dot translated-dot"></span>
+                <span
+                    class="
+                        language-dot
+                        translated-dot
+                    "
+                ></span>
 
                 <strong>
                     Traducción
@@ -1509,10 +1400,10 @@ export class DocumentsModule {
 
             </div>
 
-
             <span class="document-panel-language">
 
                 ${targetLanguage.flag}
+
                 ${targetLanguage.name}
 
             </span>
@@ -1592,7 +1483,8 @@ export class DocumentsModule {
                 "Traducción copiada",
 
                 (
-                    "El contenido traducido fue " +
+                    "El contenido traducido fue "
+                    +
                     "copiado al portapapeles."
                 ),
 
@@ -1617,8 +1509,9 @@ export class DocumentsModule {
                 "No se pudo copiar",
 
                 (
-                    "El navegador no permitió copiar " +
-                    "el contenido automáticamente."
+                    "El navegador no permitió "
+                    +
+                    "copiar el contenido."
                 ),
 
                 "warning"
@@ -1631,10 +1524,12 @@ export class DocumentsModule {
 
 
     // =====================================================
-    // DESCARGAR TRADUCCIÓN
+    // DESCARGAR ARCHIVO REAL
     // =====================================================
 
-    downloadTranslation() {
+    async downloadTranslation(
+        button
+    ) {
 
         if (
             !this.lastResult
@@ -1645,7 +1540,8 @@ export class DocumentsModule {
                 "Sin traducción",
 
                 (
-                    "Primero debes traducir " +
+                    "Primero debes traducir "
+                    +
                     "un documento."
                 ),
 
@@ -1659,282 +1555,422 @@ export class DocumentsModule {
         }
 
 
-        // =================================================
-        // TEXTO
-        // =================================================
+        const previousContent =
+            button.innerHTML;
 
-        const content =
-            this.buildTranslatedText(
-                this.lastResult
-            );
 
+        button.disabled =
+            true;
 
-        // =================================================
-        // BOM UTF-8
-        // =================================================
-        //
-        // Ayuda a que Windows / Bloc de notas / Word
-        // interpreten correctamente ñ, acentos, etc.
-        //
-        // =================================================
 
-        const blob =
-            new Blob(
+        button.innerHTML = `
 
-                [
-                    "\uFEFF",
-                    content
-                ],
+            <span
+                class="spinner-border spinner-border-sm"
+                aria-hidden="true"
+            ></span>
 
-                {
-                    type:
-                        "text/plain;charset=utf-8"
-                }
+            Generando...
 
-            );
+        `;
 
 
-        const url =
-            URL.createObjectURL(
-                blob
-            );
+        try {
 
+            const payload = {
 
-        // =================================================
-        // NOMBRE
-        // =================================================
+                original_file_name:
+                    this.lastResult.file_name,
 
-        const downloadName =
-            this.buildDownloadFileName(
-                this.lastResult.file_name
-            );
-
-
-        // =================================================
-        // LINK TEMPORAL
-        // =================================================
-
-        const link =
-            document.createElement(
-                "a"
-            );
-
-
-        link.href =
-            url;
-
-
-        link.download =
-            downloadName;
-
-
-        link.style.display =
-            "none";
-
-
-        document.body
-            .appendChild(
-                link
-            );
-
-
-        link.click();
-
-
-        link.remove();
-
-
-        // =================================================
-        // LIBERAR URL
-        // =================================================
-
-        window.setTimeout(
-            () => {
-
-                URL.revokeObjectURL(
-                    url
-                );
-
-            },
-            1000
-        );
-
-
-        this.showToast(
-
-            "Descarga iniciada",
-
-            (
-                `Se descargará "${downloadName}".`
-            ),
-
-            "success"
-
-        );
-
-    }
-
-
-    // =====================================================
-    // CONSTRUIR DOCUMENTO TRADUCIDO
-    // =====================================================
-
-    buildTranslatedText(
-        data
-    ) {
-
-        const targetLanguage =
-            this.getLanguageLabel(
-                data.target_language
-            );
-
-
-        const lines = [];
-
-
-        // =================================================
-        // CABECERA
-        // =================================================
-
-        lines.push(
-            "TRADUCCIÓN DEL DOCUMENTO"
-        );
-
-
-        lines.push(
-            "========================"
-        );
-
-
-        lines.push(
-            ""
-        );
-
-
-        lines.push(
-            `Archivo original: ${data.file_name}`
-        );
-
-
-        lines.push(
-            `Idioma de traducción: ${targetLanguage.name}`
-        );
-
-
-        lines.push(
-            ""
-        );
-
-
-        lines.push(
-            "----------------------------------------"
-        );
-
-
-        lines.push(
-            ""
-        );
-
-
-        // =================================================
-        // SECCIONES
-        // =================================================
-
-        data.sections.forEach(
-            (
-                section,
-                index
-            ) => {
-
-                const title =
-                    (
-                        section.translated_title ||
-                        `Sección ${index + 1}`
+                file_type:
+                    String(
+                        this.lastResult.file_type
                     )
-                    .trim();
+                    .toLowerCase(),
+
+                target_language:
+                    this.lastResult.target_language,
+
+                sections:
+                    this.lastResult
+                        .sections
+                        .map(
+                            section => ({
+
+                                translated_title:
+                                    section.translated_title
+                                    ||
+                                    "",
+
+                                translated_text:
+                                    section.translated_text
+
+                            })
+                        )
+
+            };
 
 
-                if (
-                    title
-                ) {
+            const response =
+                await fetch(
 
-                    lines.push(
-                        title
-                    );
-
-
-                    lines.push(
-                        ""
-                    );
-
-                }
-
-
-                lines.push(
                     (
-                        section.translated_text ||
+                        `${this.apiBaseUrl}` +
+                        `/api/document/download`
+                    ),
+
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify(
+                                payload
+                            )
+
+                    }
+
+                );
+
+
+            // =================================================
+            // ERROR DEL BACKEND
+            // =================================================
+
+            if (
+                !response.ok
+            ) {
+
+                let message =
+                    (
+                        "No fue posible generar "
+                        +
+                        "el archivo traducido."
+                    );
+
+
+                const contentType =
+                    (
+                        response.headers
+                            .get(
+                                "content-type"
+                            )
+                        ||
                         ""
-                    ).trim()
-                );
-
-
-                lines.push(
-                    ""
-                );
+                    );
 
 
                 if (
-                    index <
-                    data.sections.length - 1
+                    contentType.includes(
+                        "application/json"
+                    )
                 ) {
 
-                    lines.push(
-                        "----------------------------------------"
-                    );
+                    try {
+
+                        const errorData =
+                            await response.json();
 
 
-                    lines.push(
-                        ""
-                    );
+                        message =
+                            (
+                                errorData?.detail
+                                ||
+                                message
+                            );
+
+                    }
+
+                    catch {
+
+                        // Mantener mensaje predeterminado.
+
+                    }
 
                 }
+
+
+                throw new Error(
+                    message
+                );
 
             }
-        );
 
 
-        return (
-            lines
-                .join(
-                    "\n"
-                )
-                .trim()
-            +
-            "\n"
-        );
+            // =================================================
+            // ARCHIVO
+            // =================================================
+
+            const blob =
+                await response.blob();
+
+
+            if (
+                blob.size <= 0
+            ) {
+
+                throw new Error(
+                    (
+                        "El servidor devolvió "
+                        +
+                        "un archivo vacío."
+                    )
+                );
+
+            }
+
+
+            // =================================================
+            // NOMBRE
+            // =================================================
+
+            const downloadName =
+                this.getDownloadFileName(
+                    response
+                );
+
+
+            // =================================================
+            // DESCARGAR
+            // =================================================
+
+            const url =
+                URL.createObjectURL(
+                    blob
+                );
+
+
+            const link =
+                document.createElement(
+                    "a"
+                );
+
+
+            link.href =
+                url;
+
+
+            link.download =
+                downloadName;
+
+
+            link.style.display =
+                "none";
+
+
+            document.body
+                .appendChild(
+                    link
+                );
+
+
+            link.click();
+
+
+            link.remove();
+
+
+            window.setTimeout(
+                () => {
+
+                    URL.revokeObjectURL(
+                        url
+                    );
+
+                },
+                1000
+            );
+
+
+            this.showToast(
+
+                "Descarga iniciada",
+
+                (
+                    `Descargando "${downloadName}".`
+                ),
+
+                "success"
+
+            );
+
+        }
+
+        catch (
+            error
+        ) {
+
+            console.error(
+                "Error descargando documento:",
+                error
+            );
+
+
+            this.showToast(
+
+                "Error de descarga",
+
+                (
+                    error instanceof Error
+
+                        ? error.message
+
+                        : (
+                            "No fue posible descargar "
+                            +
+                            "el archivo."
+                        )
+                ),
+
+                "danger"
+
+            );
+
+        }
+
+        finally {
+
+            button.disabled =
+                false;
+
+
+            button.innerHTML =
+                previousContent;
+
+        }
 
     }
 
 
     // =====================================================
-    // NOMBRE DEL ARCHIVO
+    // NOMBRE DESDE CONTENT-DISPOSITION
     // =====================================================
 
-    buildDownloadFileName(
-        originalFileName
+    getDownloadFileName(
+        response
     ) {
 
-        const fileName =
+        const fallback =
+            this.buildDownloadFileName();
+
+
+        const disposition =
+            response.headers.get(
+                "Content-Disposition"
+            );
+
+
+        if (
+            !disposition
+        ) {
+
+            return fallback;
+
+        }
+
+
+        // =================================================
+        // RFC 5987
+        // filename*=UTF-8''archivo.pdf
+        // =================================================
+
+        const utf8Match =
+            disposition.match(
+                /filename\*=UTF-8''([^;]+)/i
+            );
+
+
+        if (
+            utf8Match?.[1]
+        ) {
+
+            try {
+
+                return decodeURIComponent(
+                    utf8Match[1]
+                        .replace(
+                            /^["']|["']$/g,
+                            ""
+                        )
+                        .trim()
+                );
+
+            }
+
+            catch {
+
+                return fallback;
+
+            }
+
+        }
+
+
+        // =================================================
+        // filename="archivo.pdf"
+        // =================================================
+
+        const normalMatch =
+            disposition.match(
+                /filename="?([^";]+)"?/i
+            );
+
+
+        if (
+            normalMatch?.[1]
+        ) {
+
+            return (
+                normalMatch[1]
+                .trim()
+            );
+
+        }
+
+
+        return fallback;
+
+    }
+
+
+    // =====================================================
+    // NOMBRE FALLBACK
+    // =====================================================
+
+    buildDownloadFileName() {
+
+        const originalFileName =
             String(
-                originalFileName ||
+                this.lastResult
+                    ?.file_name
+                ||
                 "documento"
             );
 
 
+        const extension =
+            String(
+                this.lastResult
+                    ?.file_type
+                ||
+                "txt"
+            )
+            .toLowerCase();
+
+
         const lastDot =
-            fileName.lastIndexOf(
-                "."
-            );
+            originalFileName
+                .lastIndexOf(
+                    "."
+                );
 
 
         let baseName;
@@ -1945,7 +1981,8 @@ export class DocumentsModule {
         ) {
 
             baseName =
-                fileName.substring(
+                originalFileName
+                .substring(
                     0,
                     lastDot
                 );
@@ -1955,7 +1992,7 @@ export class DocumentsModule {
         else {
 
             baseName =
-                fileName;
+                originalFileName;
 
         }
 
@@ -1980,14 +2017,95 @@ export class DocumentsModule {
 
 
         return (
-            `${baseName}_traducido.txt`
+            `${baseName}_traducido.${extension}`
         );
 
     }
 
 
     // =====================================================
-    // ERROR VISUAL
+    // TEXTO PARA PORTAPAPELES
+    // =====================================================
+
+    buildTranslatedText(
+        data
+    ) {
+
+        const lines = [];
+
+
+        data.sections.forEach(
+            (
+                section,
+                index
+            ) => {
+
+                const title =
+                    (
+                        section.translated_title
+                        ||
+                        `Sección ${index + 1}`
+                    )
+                    .trim();
+
+
+                const text =
+                    (
+                        section.translated_text
+                        ||
+                        ""
+                    )
+                    .trim();
+
+
+                if (
+                    title
+                ) {
+
+                    lines.push(
+                        title
+                    );
+
+
+                    lines.push(
+                        ""
+                    );
+
+                }
+
+
+                if (
+                    text
+                ) {
+
+                    lines.push(
+                        text
+                    );
+
+
+                    lines.push(
+                        ""
+                    );
+
+                }
+
+            }
+        );
+
+
+        return (
+            lines
+                .join(
+                    "\n"
+                )
+                .trim()
+        );
+
+    }
+
+
+    // =====================================================
+    // ERROR
     // =====================================================
 
     renderError(
@@ -2019,7 +2137,11 @@ export class DocumentsModule {
 
 
         icon.innerHTML =
-            '<i class="bi bi-exclamation-triangle"></i>';
+            (
+                '<i class="bi '
+                +
+                'bi-exclamation-triangle"></i>'
+            );
 
 
         const title =
@@ -2029,7 +2151,11 @@ export class DocumentsModule {
 
 
         title.textContent =
-            "No fue posible traducir el documento";
+            (
+                "No fue posible traducir "
+                +
+                "el documento"
+            );
 
 
         const paragraph =
@@ -2058,14 +2184,19 @@ export class DocumentsModule {
 
 
     // =====================================================
-    // RESULTADO VACÍO
+    // ESTADO VACÍO
     // =====================================================
 
     resetResult() {
 
         this.resultContainer.innerHTML = `
 
-            <div class="result-empty document-modern-empty">
+            <div
+                class="
+                    result-empty
+                    document-modern-empty
+                "
+            >
 
                 <div class="document-empty-icon">
 
@@ -2081,9 +2212,12 @@ export class DocumentsModule {
 
                 <p>
 
-                    Selecciona un archivo PDF, DOCX o TXT
-                    y presiona
-                    <strong>Traducir documento</strong>.
+                    Selecciona un archivo
+                    PDF, DOCX o TXT y presiona
+
+                    <strong>
+                        Traducir documento
+                    </strong>.
 
                 </p>
 
@@ -2095,7 +2229,7 @@ export class DocumentsModule {
 
 
     // =====================================================
-    // ELIMINAR ARCHIVO
+    // ELIMINAR DOCUMENTO
     // =====================================================
 
     removeFile() {
@@ -2140,7 +2274,8 @@ export class DocumentsModule {
             "Documento eliminado",
 
             (
-                "El archivo seleccionado " +
+                "El archivo seleccionado "
+                +
                 "fue retirado."
             ),
 
@@ -2163,8 +2298,8 @@ export class DocumentsModule {
             String(
                 fileName
             )
-                .toLowerCase()
-                .split(".");
+            .toLowerCase()
+            .split(".");
 
 
         if (
@@ -2176,7 +2311,9 @@ export class DocumentsModule {
         }
 
 
-        return parts.pop();
+        return (
+            parts.pop()
+        );
 
     }
 
@@ -2190,13 +2327,16 @@ export class DocumentsModule {
     ) {
 
         const maximumBytes =
-            this.maxSizeMB *
-            1024 *
+            this.maxSizeMB
+            *
+            1024
+            *
             1024;
 
 
         return (
-            file.size <=
+            file.size
+            <=
             maximumBytes
         );
 
@@ -2221,12 +2361,10 @@ export class DocumentsModule {
 
 
         const units = [
-
             "bytes",
             "KB",
             "MB",
             "GB"
-
         ];
 
 
@@ -2260,7 +2398,8 @@ export class DocumentsModule {
 
 
         return (
-            `${value.toFixed(2)} ` +
+            `${value.toFixed(2)} `
+            +
             `${units[index]}`
         );
 

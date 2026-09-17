@@ -1,14 +1,23 @@
+import io
 import logging
+
+from urllib.parse import (
+    quote
+)
 
 from fastapi import (
     FastAPI,
+    File,
     HTTPException,
-    UploadFile,
-    File
+    UploadFile
 )
 
 from fastapi.middleware.cors import (
     CORSMiddleware
+)
+
+from fastapi.responses import (
+    StreamingResponse
 )
 
 
@@ -26,15 +35,16 @@ from backend.core.settings import (
 # ==========================================================
 
 from backend.models.translation import (
-    ChatRequest,
     ChatApiResponse,
-    RealtimeSessionRequest,
-    DocumentApiResponse
+    ChatRequest,
+    DocumentApiResponse,
+    DocumentDownloadRequest,
+    RealtimeSessionRequest
 )
 
 
 # ==========================================================
-# SERVICIO OPENAI
+# OPENAI
 # ==========================================================
 
 from backend.services.openai_service import (
@@ -53,7 +63,7 @@ from backend.services.chat_service import (
 
 
 # ==========================================================
-# VOZ REALTIME
+# VOZ
 # ==========================================================
 
 from backend.services.realtime_service import (
@@ -96,7 +106,10 @@ app = FastAPI(
         "Español ↔ Inglés."
     ),
 
-    version="1.0.0"
+    version=(
+        "1.1.0"
+    )
+
 )
 
 
@@ -123,6 +136,10 @@ app.add_middleware(
     allow_headers=[
         "Content-Type",
         "Authorization"
+    ],
+
+    expose_headers=[
+        "Content-Disposition"
     ]
 
 )
@@ -132,24 +149,32 @@ app.add_middleware(
 # SERVICIOS
 # ==========================================================
 
-openai_service = OpenAIService(
-    settings
+openai_service = (
+    OpenAIService(
+        settings
+    )
 )
 
 
-chat_service = ChatService(
-    openai_service
+chat_service = (
+    ChatService(
+        openai_service
+    )
 )
 
 
-realtime_service = RealtimeService(
-    settings
+realtime_service = (
+    RealtimeService(
+        settings
+    )
 )
 
 
-document_service = DocumentService(
-    settings,
-    openai_service
+document_service = (
+    DocumentService(
+        settings,
+        openai_service
+    )
 )
 
 
@@ -174,7 +199,7 @@ async def root():
             ),
 
         "version":
-            "1.0.0"
+            "1.1.0"
 
     }
 
@@ -201,6 +226,9 @@ async def health():
         "status":
             "online",
 
+        "version":
+            "1.1.0",
+
         "openai_configured":
             configured,
 
@@ -226,6 +254,9 @@ async def health():
                     if configured
                     else "configuration_required"
                 ),
+
+            "document_download":
+                "ready",
 
             "images":
                 "pending"
@@ -276,10 +307,6 @@ async def chat(
         }
 
 
-    # ======================================================
-    # ENTRADA INVÁLIDA
-    # ======================================================
-
     except ValueError as error:
 
         raise HTTPException(
@@ -292,10 +319,6 @@ async def chat(
 
         )
 
-
-    # ======================================================
-    # ERROR OPENAI
-    # ======================================================
 
     except OpenAIServiceException as error:
 
@@ -311,10 +334,6 @@ async def chat(
 
         )
 
-
-    # ======================================================
-    # ERROR GENERAL
-    # ======================================================
 
     except Exception:
 
@@ -371,10 +390,6 @@ def create_realtime_session(
         }
 
 
-    # ======================================================
-    # ERROR REALTIME
-    # ======================================================
-
     except RealtimeServiceException as error:
 
         raise HTTPException(
@@ -389,10 +404,6 @@ def create_realtime_session(
 
         )
 
-
-    # ======================================================
-    # ERROR GENERAL
-    # ======================================================
 
     except Exception:
 
@@ -417,7 +428,7 @@ def create_realtime_session(
 
 
 # ==========================================================
-# DOCUMENTOS
+# TRADUCIR DOCUMENTO
 # ==========================================================
 
 @app.post(
@@ -430,38 +441,24 @@ async def translate_document(
 
     try:
 
-        # ==================================================
-        # NOMBRE DEL ARCHIVO
-        # ==================================================
-
         file_name = (
             file.filename
-            or "documento"
+            or
+            "documento"
         )
 
-
-        # ==================================================
-        # CONTENT TYPE
-        # ==================================================
 
         content_type = (
             file.content_type
-            or ""
+            or
+            ""
         )
 
-
-        # ==================================================
-        # LEER ARCHIVO
-        # ==================================================
 
         file_bytes = (
             await file.read()
         )
 
-
-        # ==================================================
-        # VALIDAR ARCHIVO VACÍO
-        # ==================================================
 
         if (
             not file_bytes
@@ -475,10 +472,6 @@ async def translate_document(
                 400
             )
 
-
-        # ==================================================
-        # PROCESAR Y TRADUCIR
-        # ==================================================
 
         result = (
             document_service
@@ -500,10 +493,6 @@ async def translate_document(
         )
 
 
-        # ==================================================
-        # RESPUESTA
-        # ==================================================
-
         return {
 
             "success":
@@ -514,10 +503,6 @@ async def translate_document(
 
         }
 
-
-    # ======================================================
-    # ERROR DE DOCUMENTO
-    # ======================================================
 
     except DocumentServiceException as error:
 
@@ -534,10 +519,6 @@ async def translate_document(
         )
 
 
-    # ======================================================
-    # ERROR OPENAI
-    # ======================================================
-
     except OpenAIServiceException as error:
 
         raise HTTPException(
@@ -553,10 +534,6 @@ async def translate_document(
         )
 
 
-    # ======================================================
-    # ERROR GENERAL
-    # ======================================================
-
     except Exception:
 
         logger.exception(
@@ -569,17 +546,198 @@ async def translate_document(
             status_code=500,
 
             detail=(
-                "Ocurrió un error interno "
-                "al procesar el documento."
+                "Ocurrió un error interno al "
+                "procesar el documento."
             )
 
         )
 
 
-    # ======================================================
-    # CERRAR ARCHIVO
-    # ======================================================
-
     finally:
 
         await file.close()
+
+
+# ==========================================================
+# DESCARGA - DIAGNÓSTICO
+# ==========================================================
+
+@app.get(
+    "/api/document/download"
+)
+async def document_download_status():
+
+    return {
+
+        "success":
+            True,
+
+        "status":
+            "ready",
+
+        "message":
+            (
+                "El endpoint de descarga de "
+                "documentos está disponible."
+            ),
+
+        "method":
+            "POST",
+
+        "formats": [
+            "txt",
+            "docx",
+            "pdf"
+        ]
+
+    }
+
+
+# ==========================================================
+# DESCARGAR DOCUMENTO TRADUCIDO
+# ==========================================================
+
+@app.post(
+    "/api/document/download"
+)
+def download_translated_document(
+    request: DocumentDownloadRequest
+):
+
+    try:
+
+        # ==================================================
+        # CONVERTIR SECCIONES
+        # ==================================================
+
+        sections = [
+
+            {
+
+                "translated_title":
+                    section.translated_title,
+
+                "translated_text":
+                    section.translated_text
+
+            }
+
+            for section
+            in request.sections
+
+        ]
+
+
+        # ==================================================
+        # GENERAR ARCHIVO
+        # ==================================================
+
+        (
+            download_name,
+            mime_type,
+            file_bytes
+        ) = (
+            document_service
+            .generate_translated_file(
+
+                original_file_name=(
+                    request.original_file_name
+                ),
+
+                extension=(
+                    request.file_type
+                ),
+
+                target_language=(
+                    request.target_language
+                ),
+
+                sections=(
+                    sections
+                )
+
+            )
+        )
+
+
+        # ==================================================
+        # NOMBRE UTF-8
+        # ==================================================
+
+        encoded_name = (
+            quote(
+                download_name
+            )
+        )
+
+
+        headers = {
+
+            "Content-Disposition":
+                (
+                    "attachment; "
+                    f"filename*=UTF-8''{encoded_name}"
+                ),
+
+            "Cache-Control":
+                "no-store"
+
+        }
+
+
+        # ==================================================
+        # RESPUESTA BINARIA
+        # ==================================================
+
+        return StreamingResponse(
+
+            io.BytesIO(
+                file_bytes
+            ),
+
+            media_type=(
+                mime_type
+            ),
+
+            headers=(
+                headers
+            )
+
+        )
+
+
+    except DocumentServiceException as error:
+
+        raise HTTPException(
+
+            status_code=(
+                error.status_code
+            ),
+
+            detail=(
+                error.user_message
+            )
+
+        )
+
+
+    except Exception:
+
+        logger.exception(
+            (
+                "Error inesperado en "
+                "/api/document/download"
+            )
+        )
+
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail=(
+                "Ocurrió un error interno al "
+                "generar el documento traducido."
+            )
+
+        )
