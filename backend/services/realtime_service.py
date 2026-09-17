@@ -1,3 +1,4 @@
+import json
 import logging
 
 import httpx
@@ -44,7 +45,7 @@ class RealtimeServiceException(
 
 
 # ==========================================================
-# REALTIME SERVICE
+# SERVICIO REALTIME
 # ==========================================================
 
 class RealtimeService:
@@ -86,38 +87,49 @@ class RealtimeService:
 
 
     # ======================================================
-    # PROMPT
+    # INSTRUCCIONES
     # ======================================================
 
     @staticmethod
     def _instructions() -> str:
 
         return """
-You are a professional real-time interpreter between
-Spanish and English.
+You are a professional real-time bilingual interpreter
+between Spanish and English.
 
-Translate every spoken user turn.
+Your task is to translate every spoken user turn.
 
-If the user speaks Spanish:
-- translate it naturally into English.
+RULES:
 
-If the user speaks English:
-- translate it naturally into Spanish.
+1. Automatically detect whether the user is speaking
+   Spanish or English.
 
-Speak only the translation.
+2. If the user speaks Spanish:
+   translate naturally into English.
 
-Do not answer the user's question.
-Do not add advice.
-Do not explain the translation.
-Do not add introductions.
-Do not repeat the original message.
+3. If the user speaks English:
+   translate naturally into Spanish.
 
-Preserve names, numbers, dates, currencies, units,
-acronyms and technical terms correctly.
+4. Speak ONLY the translation.
 
-Automatically detect the language of every new turn.
+5. Do not answer questions as an assistant.
 
-The spoken output must always be in the opposite language.
+6. Do not provide advice or additional information.
+
+7. Do not explain the translation.
+
+8. Do not repeat the original sentence.
+
+9. Preserve names, numbers, dates, times, currencies,
+   units, acronyms and technical terminology.
+
+10. Preserve the meaning and tone of the speaker.
+
+11. Prefer natural translations over literal
+    word-for-word translations.
+
+12. Every new spoken turn may use a different language.
+    Detect the language again for every turn.
 """.strip()
 
 
@@ -178,7 +190,9 @@ The spoken output must always be in the opposite language.
 
                         "interrupt_response":
                             True
+
                     }
+
                 },
 
                 "output": {
@@ -188,7 +202,9 @@ The spoken output must always be in the opposite language.
                         .realtime_voice
 
                 }
+
             }
+
         }
 
 
@@ -203,6 +219,10 @@ The spoken output must always be in the opposite language.
 
         self._ensure_configured()
 
+
+        # ==================================================
+        # VALIDAR SDP
+        # ==================================================
 
         clean_sdp = (
             sdp.strip()
@@ -222,6 +242,53 @@ The spoken output must always be in the opposite language.
             )
 
 
+        if (
+            not clean_sdp.startswith(
+                "v=0"
+            )
+        ):
+
+            raise RealtimeServiceException(
+                (
+                    "La información WebRTC "
+                    "no tiene un formato válido."
+                ),
+                400
+            )
+
+
+        # ==================================================
+        # SESIÓN
+        # ==================================================
+
+        session_config = (
+            self._session_config()
+        )
+
+
+        session_json = (
+            json.dumps(
+                session_config,
+                ensure_ascii=False
+            )
+        )
+
+
+        # ==================================================
+        # HEADERS
+        # ==================================================
+        #
+        # IMPORTANTE:
+        #
+        # NO establecer Content-Type manualmente.
+        #
+        # httpx agregará automáticamente:
+        #
+        # multipart/form-data;
+        # boundary=...
+        #
+        # ==================================================
+
         headers = {
 
             "Authorization":
@@ -230,22 +297,48 @@ The spoken output must always be in the opposite language.
                     f"{self.settings.openai_api_key}"
                 ),
 
-            "Content-Type":
-                "application/json"
+            "Accept":
+                "application/sdp"
+
         }
 
 
-        payload = {
+        # ==================================================
+        # MULTIPART
+        # ==================================================
+        #
+        # OpenAI requiere:
+        #
+        # sdp:
+        # application/sdp
+        #
+        # session:
+        # application/json
+        #
+        # ==================================================
 
-            "sdp":
+        files = {
+
+            "sdp": (
+                None,
                 clean_sdp,
+                "application/sdp"
+            ),
 
-            "session":
-                self._session_config()
+            "session": (
+                None,
+                session_json,
+                "application/json"
+            )
+
         }
 
 
         try:
+
+            # ==============================================
+            # PETICIÓN OPENAI
+            # ==============================================
 
             with httpx.Client(
                 timeout=30.0
@@ -257,12 +350,24 @@ The spoken output must always be in the opposite language.
 
                     headers=headers,
 
-                    json=payload
+                    files=files
 
                 )
 
 
+        # ==================================================
+        # TIMEOUT
+        # ==================================================
+
         except httpx.TimeoutException:
+
+            logger.exception(
+                (
+                    "Timeout conectando con "
+                    "OpenAI Realtime."
+                )
+            )
+
 
             raise RealtimeServiceException(
                 (
@@ -273,9 +378,13 @@ The spoken output must always be in the opposite language.
             )
 
 
+        # ==================================================
+        # CONEXIÓN
+        # ==================================================
+
         except httpx.RequestError as error:
 
-            logger.error(
+            logger.exception(
                 (
                     "Error de conexión con "
                     "OpenAI Realtime: %s"
@@ -294,7 +403,29 @@ The spoken output must always be in the opposite language.
 
 
         # ==================================================
-        # DEBUG SEGURO
+        # REQUEST ID
+        # ==================================================
+
+        request_id = (
+            response.headers.get(
+                "x-request-id",
+                "sin-request-id"
+            )
+        )
+
+
+        logger.info(
+            (
+                "OpenAI Realtime respondió. "
+                "Status=%s RequestID=%s"
+            ),
+            response.status_code,
+            request_id
+        )
+
+
+        # ==================================================
+        # ERRORES OPENAI
         # ==================================================
 
         if (
@@ -305,10 +436,13 @@ The spoken output must always be in the opposite language.
                 (
                     "OpenAI Realtime rechazó "
                     "la solicitud. "
-                    "Status=%s Body=%s"
+                    "Status=%s "
+                    "RequestID=%s "
+                    "Body=%s"
                 ),
                 response.status_code,
-                response.text[:1500]
+                request_id,
+                response.text[:2000]
             )
 
 
@@ -330,6 +464,23 @@ The spoken output must always be in the opposite language.
 
 
         # ==================================================
+        # PERMISOS
+        # ==================================================
+
+        if (
+            response.status_code == 403
+        ):
+
+            raise RealtimeServiceException(
+                (
+                    "La cuenta de OpenAI no tiene "
+                    "acceso al servicio de voz solicitado."
+                ),
+                403
+            )
+
+
+        # ==================================================
         # RATE LIMIT
         # ==================================================
 
@@ -347,7 +498,7 @@ The spoken output must always be in the opposite language.
 
 
         # ==================================================
-        # SOLICITUD INCORRECTA
+        # CONFIGURACIÓN INVÁLIDA
         # ==================================================
 
         if (
@@ -381,7 +532,7 @@ The spoken output must always be in the opposite language.
 
 
         # ==================================================
-        # SDP ANSWER
+        # LEER SDP ANSWER
         # ==================================================
 
         answer_sdp = (
@@ -400,6 +551,46 @@ The spoken output must always be in the opposite language.
                 ),
                 502
             )
+
+
+        # ==================================================
+        # VALIDAR SDP ANSWER
+        # ==================================================
+
+        if (
+            not answer_sdp.startswith(
+                "v=0"
+            )
+        ):
+
+            logger.error(
+                (
+                    "OpenAI devolvió una respuesta "
+                    "que no parece SDP. "
+                    "RequestID=%s Body=%s"
+                ),
+                request_id,
+                answer_sdp[:1000]
+            )
+
+
+            raise RealtimeServiceException(
+                (
+                    "OpenAI devolvió una respuesta "
+                    "WebRTC no válida."
+                ),
+                502
+            )
+
+
+        logger.info(
+            (
+                "Sesión WebRTC creada "
+                "correctamente. "
+                "RequestID=%s"
+            ),
+            request_id
+        )
 
 
         return answer_sdp
