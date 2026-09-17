@@ -1,3 +1,7 @@
+// =========================================================
+// MÓDULO DE IMÁGENES
+// =========================================================
+
 class ImagesModule {
 
     constructor({
@@ -17,48 +21,69 @@ class ImagesModule {
         showToast
     }) {
 
+        // =================================================
+        // DEPENDENCIAS
+        // =================================================
+
         this.apiBaseUrl =
             apiBaseUrl;
+
 
         this.dropZone =
             dropZone;
 
+
         this.input =
             input;
+
 
         this.selectButton =
             selectButton;
 
+
         this.previewContainer =
             previewContainer;
+
 
         this.preview =
             preview;
 
+
         this.removeButton =
             removeButton;
+
 
         this.analyzeButton =
             analyzeButton;
 
+
         this.translationResult =
             translationResult;
+
 
         this.generateButton =
             generateButton;
 
+
         this.generatedResult =
             generatedResult;
+
 
         this.generatedImage =
             generatedImage;
 
+
         this.downloadButton =
             downloadButton;
+
 
         this.showToast =
             showToast;
 
+
+        // =================================================
+        // CONFIGURACIÓN
+        // =================================================
 
         this.allowedTypes = [
             "image/jpeg",
@@ -70,6 +95,10 @@ class ImagesModule {
         this.maxSizeMB =
             4;
 
+
+        // =================================================
+        // ESTADO
+        // =================================================
 
         this.selectedFile =
             null;
@@ -99,6 +128,10 @@ class ImagesModule {
             false;
 
 
+        // =================================================
+        // INICIALIZAR
+        // =================================================
+
         this.bindEvents();
 
     }
@@ -111,7 +144,7 @@ class ImagesModule {
     bindEvents() {
 
         // =================================================
-        // SELECCIONAR IMAGEN
+        // SELECCIONAR
         // =================================================
 
         this.selectButton.addEventListener(
@@ -219,7 +252,7 @@ class ImagesModule {
 
 
         // =================================================
-        // DRAG ENTER / OVER
+        // DRAG ENTER / DRAG OVER
         // =================================================
 
         [
@@ -340,7 +373,7 @@ class ImagesModule {
     ) {
 
         // =================================================
-        // VALIDAR FORMATO
+        // TIPO
         // =================================================
 
         if (
@@ -374,7 +407,7 @@ class ImagesModule {
 
 
         // =================================================
-        // VALIDAR TAMAÑO
+        // TAMAÑO
         // =================================================
 
         const maximumBytes =
@@ -473,19 +506,19 @@ class ImagesModule {
             );
 
 
+        this.generatedResult
+            .classList
+            .add(
+                "d-none"
+            );
+
+
         this.analyzeButton.disabled =
             false;
 
 
         this.generateButton.disabled =
             true;
-
-
-        this.generatedResult
-            .classList
-            .add(
-                "d-none"
-            );
 
 
         this.resetTranslationResult();
@@ -524,6 +557,10 @@ class ImagesModule {
         }
 
 
+        // =================================================
+        // ESTADO
+        // =================================================
+
         this.analyzing =
             true;
 
@@ -559,6 +596,10 @@ class ImagesModule {
         this.renderAnalysisLoading();
 
 
+        // =================================================
+        // FORMDATA
+        // =================================================
+
         const formData =
             new FormData();
 
@@ -575,6 +616,10 @@ class ImagesModule {
 
 
         try {
+
+            // =============================================
+            // REQUEST
+            // =============================================
 
             const response =
                 await fetch(
@@ -596,6 +641,10 @@ class ImagesModule {
 
                 );
 
+
+            // =============================================
+            // JSON
+            // =============================================
 
             let result;
 
@@ -619,6 +668,10 @@ class ImagesModule {
             }
 
 
+            // =============================================
+            // ERROR HTTP
+            // =============================================
+
             if (
                 !response.ok
             ) {
@@ -637,6 +690,10 @@ class ImagesModule {
             }
 
 
+            // =============================================
+            // VALIDAR
+            // =============================================
+
             if (
                 !result?.success
                 ||
@@ -654,7 +711,7 @@ class ImagesModule {
 
 
             // =============================================
-            // GUARDAR ANÁLISIS
+            // GUARDAR
             // =============================================
 
             this.lastAnalysis =
@@ -671,7 +728,7 @@ class ImagesModule {
 
 
             // =============================================
-            // HABILITAR GENERACIÓN
+            // TEXTO LEGIBLE
             // =============================================
 
             if (
@@ -743,8 +800,8 @@ class ImagesModule {
                     ? error.message
 
                     : (
-                        "No fue posible " +
-                        "analizar la imagen."
+                        "No fue posible analizar " +
+                        "la imagen."
                     )
 
             );
@@ -825,7 +882,7 @@ class ImagesModule {
 
 
     // =====================================================
-    // RESULTADO
+    // MOSTRAR ANÁLISIS
     // =====================================================
 
     renderAnalysis(
@@ -875,6 +932,10 @@ class ImagesModule {
 
         }
 
+
+        // =================================================
+        // IDIOMAS
+        // =================================================
 
         const source =
             this.getLanguageLabel(
@@ -1004,7 +1065,7 @@ class ImagesModule {
         originalHeader.textContent =
             (
                 `${source.flag} ` +
-                `Texto original`
+                "Texto original"
             );
 
 
@@ -1031,7 +1092,7 @@ class ImagesModule {
 
 
         // =================================================
-        // TRADUCCIÓN
+        // TRADUCIDO
         // =================================================
 
         const translated =
@@ -1060,7 +1121,7 @@ class ImagesModule {
         translatedHeader.textContent =
             (
                 `${target.flag} ` +
-                `Traducción`
+                "Traducción"
             );
 
 
@@ -1107,7 +1168,7 @@ class ImagesModule {
                 data.text_items
             )
             &&
-            data.text_items.length
+            data.text_items.length > 0
         ) {
 
             const items =
@@ -1208,7 +1269,7 @@ class ImagesModule {
 
 
     // =====================================================
-    // GENERAR IMAGEN TRADUCIDA
+    // GENERAR IMAGEN
     // =====================================================
 
     async generateImage() {
@@ -1226,6 +1287,10 @@ class ImagesModule {
 
         }
 
+
+        // =================================================
+        // ESTADO
+        // =================================================
 
         this.generating =
             true;
@@ -1253,38 +1318,39 @@ class ImagesModule {
 
         try {
 
+            // =============================================
+            // PAYLOAD
+            // =============================================
+
             const payload = {
 
                 original_file_name:
-                    this.lastAnalysis
-                        .file_name,
+                    this.lastAnalysis.file_name,
 
                 source_language:
-                    this.lastAnalysis
-                        .source_language,
+                    this.lastAnalysis.source_language,
 
                 target_language:
-                    this.lastAnalysis
-                        .target_language,
+                    this.lastAnalysis.target_language,
 
                 orientation:
-                    this.lastAnalysis
-                        .orientation,
+                    this.lastAnalysis.orientation,
 
                 translated_text:
-                    this.lastAnalysis
-                        .translated_text,
+                    this.lastAnalysis.translated_text,
 
                 visual_description:
-                    this.lastAnalysis
-                        .visual_description,
+                    this.lastAnalysis.visual_description,
 
                 text_items:
-                    this.lastAnalysis
-                        .text_items
+                    this.lastAnalysis.text_items
 
             };
 
+
+            // =============================================
+            // REQUEST
+            // =============================================
 
             const response =
                 await fetch(
@@ -1331,7 +1397,7 @@ class ImagesModule {
                     );
 
 
-                const type =
+                const contentType =
                     (
                         response.headers
                             .get(
@@ -1343,7 +1409,7 @@ class ImagesModule {
 
 
                 if (
-                    type.includes(
+                    contentType.includes(
                         "application/json"
                     )
                 ) {
@@ -1365,7 +1431,7 @@ class ImagesModule {
 
                     catch {
 
-                        // Mantener mensaje.
+                        // Mantener mensaje anterior.
 
                     }
 
@@ -1388,7 +1454,7 @@ class ImagesModule {
 
 
             if (
-                !blob.size
+                blob.size <= 0
             ) {
 
                 throw new Error(
@@ -1402,14 +1468,14 @@ class ImagesModule {
 
 
             // =============================================
-            // LIMPIAR IMAGEN ANTERIOR
+            // LIMPIAR ANTERIOR
             // =============================================
 
             this.releaseGeneratedImage();
 
 
             // =============================================
-            // URL
+            // CREAR URL
             // =============================================
 
             this.generatedUrl =
@@ -1526,7 +1592,7 @@ class ImagesModule {
 
 
     // =====================================================
-    // DESCARGAR IMAGEN
+    // DESCARGAR IMAGEN GENERADA
     // =====================================================
 
     downloadGeneratedImage() {
@@ -1629,12 +1695,12 @@ class ImagesModule {
             null;
 
 
-        this.input.value =
-            "";
-
-
         this.generatedFileName =
             null;
+
+
+        this.input.value =
+            "";
 
 
         this.releasePreview();
@@ -1703,7 +1769,7 @@ class ImagesModule {
 
 
     // =====================================================
-    // ESTADO VACÍO
+    // RESET
     // =====================================================
 
     resetTranslationResult() {
@@ -1714,13 +1780,15 @@ class ImagesModule {
 
                 <i class="bi bi-textarea-t"></i>
 
+
                 <h3>
                     Análisis visual
                 </h3>
 
+
                 <p>
-                    Selecciona una imagen para detectar
-                    y traducir su contenido textual.
+                    Selecciona una imagen para
+                    detectar y traducir su contenido textual.
                 </p>
 
             </div>
@@ -1805,7 +1873,7 @@ class ImagesModule {
 
 
     // =====================================================
-    // OBTENER NOMBRE DE DESCARGA
+    // NOMBRE DE DESCARGA
     // =====================================================
 
     getDownloadFileName(
@@ -1818,13 +1886,13 @@ class ImagesModule {
             );
 
 
-        // =================================================
-        // CONTENT-DISPOSITION UTF-8
-        // =================================================
-
         if (
             disposition
         ) {
+
+            // =============================================
+            // RFC 5987
+            // =============================================
 
             const utf8Match =
                 disposition.match(
@@ -1853,7 +1921,7 @@ class ImagesModule {
 
                 catch {
 
-                    // Fallback posterior.
+                    // Usaremos fallback.
 
                 }
 
@@ -1938,7 +2006,7 @@ class ImagesModule {
 
 
     // =====================================================
-    // IDIOMAS
+    // IDIOMA
     // =====================================================
 
     getLanguageLabel(
@@ -2014,9 +2082,14 @@ class ImagesModule {
                 return "Media";
 
 
-            default:
+            case "low":
 
                 return "Baja";
+
+
+            default:
+
+                return "Desconocida";
 
         }
 
@@ -2085,7 +2158,7 @@ class ImagesModule {
 
 
 // =========================================================
-// EXPORTACIÓN
+// EXPORTACIÓN NOMBRADA
 // =========================================================
 
 export {

@@ -24,11 +24,11 @@ import {
 
 import {
     ImagesModule
-} from "./images.js";
+} from "./images-module.js?v=1.2.1";
 
 
 // =========================================================
-// UTILIDAD - ELEMENTOS OBLIGATORIOS
+// UTILIDAD - ELEMENTO OBLIGATORIO
 // =========================================================
 
 function getRequiredElement(
@@ -61,7 +61,7 @@ function getRequiredElement(
 
 
 // =========================================================
-// ELEMENTOS DE NAVEGACIÓN
+// NAVEGACIÓN
 // =========================================================
 
 const moduleButtons =
@@ -77,7 +77,7 @@ const modules =
 
 
 // =========================================================
-// TOAST - ELEMENTOS
+// TOAST
 // =========================================================
 
 const toastElement =
@@ -105,7 +105,26 @@ const toastIcon =
 
 
 // =========================================================
-// TOAST - BOOTSTRAP
+// VALIDAR BOOTSTRAP
+// =========================================================
+
+if (
+    typeof bootstrap === "undefined"
+) {
+
+    throw new Error(
+        (
+            "Bootstrap JavaScript no está disponible. " +
+            "Verifica que bootstrap.bundle.min.js cargue " +
+            "antes de app.js."
+        )
+    );
+
+}
+
+
+// =========================================================
+// INSTANCIA TOAST
 // =========================================================
 
 const toast =
@@ -148,77 +167,49 @@ function showToast(
         type
     ) {
 
-        // =================================================
-        // ÉXITO
-        // =================================================
-
         case "success":
 
             toastIcon
                 .classList
                 .add(
-
                     "bi-check-circle-fill",
-
                     "text-success"
-
                 );
 
             break;
 
-
-        // =================================================
-        // ERROR
-        // =================================================
 
         case "danger":
 
             toastIcon
                 .classList
                 .add(
-
                     "bi-exclamation-circle-fill",
-
                     "text-danger"
-
                 );
 
             break;
 
-
-        // =================================================
-        // ADVERTENCIA
-        // =================================================
 
         case "warning":
 
             toastIcon
                 .classList
                 .add(
-
                     "bi-exclamation-triangle-fill",
-
                     "text-warning"
-
                 );
 
             break;
 
-
-        // =================================================
-        // INFORMACIÓN
-        // =================================================
 
         default:
 
             toastIcon
                 .classList
                 .add(
-
                     "bi-info-circle-fill",
-
                     "text-primary"
-
                 );
 
             break;
@@ -232,7 +223,7 @@ function showToast(
 
 
 // =========================================================
-// CAMBIAR ENTRE MÓDULOS
+// CAMBIAR MÓDULO
 // =========================================================
 
 function changeModule(
@@ -240,7 +231,7 @@ function changeModule(
 ) {
 
     // =====================================================
-    // OCULTAR MÓDULOS
+    // OCULTAR TODOS
     // =====================================================
 
     modules.forEach(
@@ -257,7 +248,7 @@ function changeModule(
 
 
     // =====================================================
-    // BUSCAR MÓDULO
+    // BUSCAR SELECCIONADO
     // =====================================================
 
     const selectedModule =
@@ -284,7 +275,7 @@ function changeModule(
 
 
     // =====================================================
-    // MOSTRAR MÓDULO
+    // MOSTRAR
     // =====================================================
 
     selectedModule
@@ -295,7 +286,7 @@ function changeModule(
 
 
     // =====================================================
-    // ACTUALIZAR BOTONES
+    // BOTONES ACTIVOS
     // =====================================================
 
     moduleButtons.forEach(
@@ -322,7 +313,7 @@ function changeModule(
 
 
     // =====================================================
-    // CERRAR MENÚ MÓVIL
+    // CERRAR OFFCANVAS
     // =====================================================
 
     const mobileMenu =
@@ -355,7 +346,7 @@ function changeModule(
 
 
     // =====================================================
-    // SCROLL
+    // SCROLL SUPERIOR
     // =====================================================
 
     window.scrollTo({
@@ -665,19 +656,18 @@ const imagesModule =
 
 
 // =========================================================
-// PROMESAS NO CONTROLADAS
+// ERRORES GLOBALES
 // =========================================================
 
 window.addEventListener(
-    "unhandledrejection",
+    "error",
     event => {
 
         console.error(
-
-            "Promesa rechazada sin manejar:",
-
-            event.reason
-
+            "Error global:",
+            event.error
+            ||
+            event.message
         );
 
     }
@@ -685,7 +675,24 @@ window.addEventListener(
 
 
 // =========================================================
-// LIMPIEZA AL CERRAR / RECARGAR
+// PROMESAS NO MANEJADAS
+// =========================================================
+
+window.addEventListener(
+    "unhandledrejection",
+    event => {
+
+        console.error(
+            "Promesa rechazada sin manejar:",
+            event.reason
+        );
+
+    }
+);
+
+
+// =========================================================
+// LIMPIEZA
 // =========================================================
 
 window.addEventListener(
@@ -693,24 +700,44 @@ window.addEventListener(
     () => {
 
         // =================================================
-        // CERRAR VOZ / WEBRTC
+        // VOZ
         // =================================================
 
-        voiceModule.destroy();
+        if (
+            voiceModule
+            &&
+            typeof voiceModule.destroy
+                ===
+                "function"
+        ) {
+
+            voiceModule.destroy();
+
+        }
 
 
         // =================================================
-        // LIBERAR OBJECT URL DE IMÁGENES
+        // IMÁGENES
         // =================================================
 
-        imagesModule.destroy();
+        if (
+            imagesModule
+            &&
+            typeof imagesModule.destroy
+                ===
+                "function"
+        ) {
+
+            imagesModule.destroy();
+
+        }
 
     }
 );
 
 
 // =========================================================
-// INICIALIZACIÓN
+// INFORMACIÓN DE INICIALIZACIÓN
 // =========================================================
 
 console.log(
@@ -722,18 +749,13 @@ console.log(
 
 
 console.log(
-
     "Backend configurado:",
-
     APP_CONFIG.apiBaseUrl
-
 );
 
 
 console.log(
-
     "Módulos cargados:",
-
     {
 
         chat:
@@ -757,5 +779,4 @@ console.log(
             )
 
     }
-
 );

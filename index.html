@@ -12,7 +12,7 @@
 
     <meta
         name="description"
-        content="Traductor inteligente multimodal Español e Inglés con Chat, voz, documentos e imágenes."
+        content="Traductor inteligente multimodal Español e Inglés con chat, voz, documentos e imágenes."
     >
 
     <title>
@@ -41,12 +41,12 @@
 
 
     <!-- =====================================================
-         CSS PROPIO
+         CSS
     ====================================================== -->
 
     <link
         rel="stylesheet"
-        href="./assets/css/styles.css"
+        href="./assets/css/styles.css?v=1.2.1"
     >
 
 </head>
@@ -75,10 +75,6 @@
             "
         >
 
-            <!-- =============================================
-                 LOGO / MARCA
-            ============================================== -->
-
             <a
                 class="
                     navbar-brand
@@ -87,7 +83,6 @@
                     gap-3
                 "
                 href="#"
-                aria-label="Traductor Inteligente Multimodal"
             >
 
                 <span class="brand-icon">
@@ -100,26 +95,17 @@
                 <span>
 
                     <span class="brand-title d-block">
-
                         Traductor IA
-
                     </span>
 
-
                     <span class="brand-subtitle d-block">
-
                         Español ↔ Inglés
-
                     </span>
 
                 </span>
 
             </a>
 
-
-            <!-- =============================================
-                 ESTADO / MENÚ MÓVIL
-            ============================================== -->
 
             <div
                 class="
@@ -180,22 +166,12 @@
         "
         tabindex="-1"
         id="mobileMenu"
-        aria-labelledby="mobileMenuLabel"
     >
 
         <div class="offcanvas-header">
 
-            <h2
-                class="
-                    offcanvas-title
-                    h5
-                    mb-0
-                "
-                id="mobileMenuLabel"
-            >
-
+            <h2 class="offcanvas-title h5 mb-0">
                 Traductor IA
-
             </h2>
 
 
@@ -212,9 +188,6 @@
         <div class="offcanvas-body">
 
             <div class="mobile-navigation">
-
-
-                <!-- CHAT -->
 
                 <button
                     type="button"
@@ -234,8 +207,6 @@
                 </button>
 
 
-                <!-- VOZ -->
-
                 <button
                     type="button"
                     class="mobile-nav-button"
@@ -251,8 +222,6 @@
                 </button>
 
 
-                <!-- DOCUMENTOS -->
-
                 <button
                     type="button"
                     class="mobile-nav-button"
@@ -267,8 +236,6 @@
 
                 </button>
 
-
-                <!-- IMÁGENES -->
 
                 <button
                     type="button"
@@ -292,7 +259,7 @@
 
 
     <!-- =====================================================
-         CONTENIDO PRINCIPAL
+         PRINCIPAL
     ====================================================== -->
 
     <main
@@ -312,7 +279,7 @@
 
 
             <!-- =================================================
-                 SIDEBAR DESKTOP
+                 SIDEBAR
             ================================================== -->
 
             <aside
@@ -327,13 +294,9 @@
                 <div class="sidebar-content">
 
                     <div class="sidebar-label">
-
                         MÓDULOS
-
                     </div>
 
-
-                    <!-- CHAT -->
 
                     <button
                         type="button"
@@ -353,8 +316,6 @@
                     </button>
 
 
-                    <!-- VOZ -->
-
                     <button
                         type="button"
                         class="sidebar-button"
@@ -369,8 +330,6 @@
 
                     </button>
 
-
-                    <!-- DOCUMENTOS -->
 
                     <button
                         type="button"
@@ -387,8 +346,6 @@
                     </button>
 
 
-                    <!-- IMÁGENES -->
-
                     <button
                         type="button"
                         class="sidebar-button"
@@ -404,8 +361,6 @@
                     </button>
 
 
-                    <!-- SEGURIDAD -->
-
                     <div class="sidebar-info">
 
                         <i class="bi bi-shield-lock"></i>
@@ -417,11 +372,9 @@
                                 API Key protegida
                             </strong>
 
-
                             <small>
-                                Las credenciales privadas
-                                permanecen únicamente
-                                en el backend.
+                                Las credenciales permanecen
+                                únicamente en el backend.
                             </small>
 
                         </div>
@@ -447,7 +400,7 @@
 
 
                 <!-- =================================================
-                     MÓDULO CHAT
+                     CHAT
                 ================================================== -->
 
                 <section
@@ -457,8 +410,6 @@
                         active
                     "
                 >
-
-                    <!-- HEADER -->
 
                     <div class="module-header">
 
@@ -482,8 +433,7 @@
                                 Escribe en español o inglés.
                                 El sistema detectará el idioma,
                                 mostrará la traducción y responderá
-                                en el idioma contrario conservando
-                                el contexto de la sesión.
+                                en el idioma contrario.
                             </p>
 
                         </div>
@@ -504,11 +454,7 @@
                     </div>
 
 
-                    <!-- CHAT -->
-
                     <div class="chat-card">
-
-                        <!-- MENSAJES -->
 
                         <div
                             id="chatMessages"
@@ -532,8 +478,7 @@
 
                                 <p>
                                     Puedes escribir en español
-                                    o inglés. El idioma será
-                                    identificado automáticamente.
+                                    o inglés.
                                 </p>
 
 
@@ -543,9 +488,7 @@
                                         🇲🇽 Español
                                     </span>
 
-
                                     <i class="bi bi-arrow-left-right"></i>
-
 
                                     <span>
                                         🇺🇸 English
@@ -558,8 +501,6 @@
                         </div>
 
 
-                        <!-- COMPOSER -->
-
                         <div class="chat-composer">
 
                             <div class="composer-info">
@@ -571,9 +512,7 @@
 
 
                                 <span id="characterCounter">
-
                                     0 / 2000
-
                                 </span>
 
                             </div>
@@ -587,7 +526,6 @@
                                     rows="1"
                                     maxlength="2000"
                                     placeholder="Escribe un mensaje en español o inglés..."
-                                    aria-label="Mensaje del chat"
                                 ></textarea>
 
 
@@ -603,16 +541,13 @@
 
                                     <i class="bi bi-send-fill"></i>
 
-
                                     <span
                                         class="
                                             d-none
                                             d-sm-inline
                                         "
                                     >
-
                                         Enviar
-
                                     </span>
 
                                 </button>
@@ -627,15 +562,13 @@
 
 
                 <!-- =================================================
-                     MÓDULO VOZ
+                     VOZ
                 ================================================== -->
 
                 <section
                     id="module-voice"
                     class="app-module"
                 >
-
-                    <!-- HEADER -->
 
                     <div class="module-header">
 
@@ -658,7 +591,7 @@
                             <p>
                                 Habla directamente desde el navegador.
                                 La IA detectará el idioma y reproducirá
-                                en voz alta la traducción al idioma contrario.
+                                la traducción al idioma contrario.
                             </p>
 
                         </div>
@@ -666,21 +599,16 @@
                     </div>
 
 
-                    <!-- PRIVACIDAD -->
-
                     <div class="privacy-notice mb-4">
 
                         <i class="bi bi-shield-lock-fill"></i>
-
 
                         <p>
 
                             <strong>Privacidad:</strong>
 
-                            el audio se procesa durante
-                            la sesión de traducción.
-                            Evita compartir información
-                            sensible o confidencial.
+                            evita compartir información sensible
+                            o confidencial.
 
                         </p>
 
@@ -689,11 +617,6 @@
 
                     <div class="voice-grid">
 
-
-                        <!-- =========================================
-                             CONTROL DE VOZ
-                        ========================================== -->
-
                         <div class="voice-control-card">
 
                             <div
@@ -701,21 +624,9 @@
                                 class="microphone-circle"
                             >
 
-                                <span
-                                    class="
-                                        pulse
-                                        pulse-1
-                                    "
-                                ></span>
+                                <span class="pulse pulse-1"></span>
 
-
-                                <span
-                                    class="
-                                        pulse
-                                        pulse-2
-                                    "
-                                ></span>
-
+                                <span class="pulse pulse-2"></span>
 
                                 <i class="bi bi-mic-fill"></i>
 
@@ -723,9 +634,7 @@
 
 
                             <h2 id="voiceTitle">
-
                                 Micrófono listo
-
                             </h2>
 
 
@@ -733,10 +642,7 @@
                                 id="voiceStatus"
                                 class="voice-status"
                             >
-
-                                Presiona el botón para iniciar
-                                la traducción de voz.
-
+                                Presiona el botón para iniciar.
                             </p>
 
 
@@ -748,9 +654,7 @@
                                     mb-3
                                 "
                             >
-
                                 Desconectado
-
                             </span>
 
 
@@ -773,9 +677,7 @@
                                     🇲🇽 ES
                                 </span>
 
-
                                 <i class="bi bi-arrow-left-right"></i>
-
 
                                 <span>
                                     🇺🇸 EN
@@ -785,10 +687,6 @@
 
                         </div>
 
-
-                        <!-- =========================================
-                             TRANSCRIPCIÓN
-                        ========================================== -->
 
                         <div class="transcript-card">
 
@@ -802,11 +700,8 @@
 
                                 </h2>
 
-
                                 <span class="badge text-bg-light">
-
                                     Tiempo real
-
                                 </span>
 
                             </div>
@@ -821,7 +716,6 @@
                                 <div class="transcript-empty">
 
                                     <i class="bi bi-soundwave"></i>
-
 
                                     <p>
                                         Las frases habladas y
@@ -840,15 +734,13 @@
 
 
                 <!-- =================================================
-                     MÓDULO DOCUMENTOS
+                     DOCUMENTOS
                 ================================================== -->
 
                 <section
                     id="module-documents"
                     class="app-module"
                 >
-
-                    <!-- HEADER -->
 
                     <div class="module-header">
 
@@ -870,8 +762,7 @@
 
                             <p>
                                 Traduce documentos PDF, Word y TXT
-                                del español al inglés o del inglés
-                                al español utilizando Inteligencia Artificial.
+                                entre español e inglés.
                             </p>
 
                         </div>
@@ -879,35 +770,23 @@
                     </div>
 
 
-                    <!-- PRIVACIDAD -->
-
                     <div class="privacy-notice mb-4">
 
                         <i class="bi bi-shield-lock-fill"></i>
-
 
                         <p>
 
                             <strong>Privacidad:</strong>
 
-                            el archivo será enviado al backend seguro
-                            para procesar su contenido mediante Inteligencia
-                            Artificial. Evita utilizar documentos que
-                            contengan información personal o sensible.
+                            evita utilizar documentos que contengan
+                            información personal o sensible.
 
                         </p>
 
                     </div>
 
 
-                    <!-- LAYOUT -->
-
                     <div class="upload-layout">
-
-
-                        <!-- =========================================
-                             CARGA DEL DOCUMENTO
-                        ========================================== -->
 
                         <div class="upload-card">
 
@@ -930,7 +809,7 @@
 
                                 <p>
                                     Arrastra el archivo aquí
-                                    o selecciónalo desde tu dispositivo.
+                                    o selecciónalo.
                                 </p>
 
 
@@ -962,8 +841,6 @@
                             </div>
 
 
-                            <!-- ARCHIVO SELECCIONADO -->
-
                             <div
                                 id="documentSelected"
                                 class="
@@ -982,16 +859,11 @@
                                 <div class="selected-file-info">
 
                                     <strong id="documentFileName">
-
                                         Documento
-
                                     </strong>
 
-
                                     <span id="documentFileSize">
-
                                         0 KB
-
                                     </span>
 
                                 </div>
@@ -1005,7 +877,6 @@
                                         btn-sm
                                         btn-outline-danger
                                     "
-                                    aria-label="Eliminar documento"
                                 >
 
                                     <i class="bi bi-trash"></i>
@@ -1014,8 +885,6 @@
 
                             </div>
 
-
-                            <!-- BOTÓN TRADUCIR -->
 
                             <button
                                 id="btnTranslateDocument"
@@ -1035,45 +904,8 @@
 
                             </button>
 
-
-                            <!-- FORMATOS -->
-
-                            <div class="document-formats mt-3">
-
-                                <span>
-
-                                    <i class="bi bi-filetype-pdf"></i>
-
-                                    PDF
-
-                                </span>
-
-
-                                <span>
-
-                                    <i class="bi bi-filetype-docx"></i>
-
-                                    DOCX
-
-                                </span>
-
-
-                                <span>
-
-                                    <i class="bi bi-filetype-txt"></i>
-
-                                    TXT
-
-                                </span>
-
-                            </div>
-
                         </div>
 
-
-                        <!-- =========================================
-                             RESULTADO DEL DOCUMENTO
-                        ========================================== -->
 
                         <div
                             class="
@@ -1094,9 +926,7 @@
 
 
                                 <span class="badge text-bg-light">
-
                                     Español ↔ English
-
                                 </span>
 
                             </div>
@@ -1127,14 +957,8 @@
 
 
                                     <p>
-
                                         Selecciona un archivo
-                                        PDF, DOCX o TXT y presiona
-
-                                        <strong>
-                                            Traducir documento
-                                        </strong>.
-
+                                        PDF, DOCX o TXT.
                                     </p>
 
                                 </div>
@@ -1149,17 +973,13 @@
 
 
                 <!-- =================================================
-                     MÓDULO IMÁGENES
+                     IMÁGENES
                 ================================================== -->
 
                 <section
                     id="module-images"
                     class="app-module"
                 >
-
-                    <!-- =============================================
-                         HEADER
-                    ============================================== -->
 
                     <div class="module-header">
 
@@ -1180,21 +1000,14 @@
 
 
                             <p>
-                                Sube una fotografía, anuncio, menú,
-                                señalización, captura o imagen con texto.
-                                La Inteligencia Artificial identificará
-                                el contenido y lo traducirá entre
-                                español e inglés.
+                                Sube fotografías, anuncios, menús,
+                                señales o capturas con texto.
                             </p>
 
                         </div>
 
                     </div>
 
-
-                    <!-- =============================================
-                         PRIVACIDAD
-                    ============================================== -->
 
                     <div class="privacy-notice mb-4">
 
@@ -1205,9 +1018,7 @@
 
                             <strong>Privacidad:</strong>
 
-                            la imagen será enviada al backend seguro
-                            para su procesamiento mediante Inteligencia
-                            Artificial. Evita fotografías que contengan
+                            evita imágenes que contengan
                             información sensible o confidencial.
 
                         </p>
@@ -1215,16 +1026,9 @@
                     </div>
 
 
-                    <!-- =============================================
-                         IMAGEN ORIGINAL + TEXTO TRADUCIDO
-                    ============================================== -->
-
                     <div class="image-translation-layout">
 
-
-                        <!-- =========================================
-                             IMAGEN ORIGINAL
-                        ========================================== -->
+                        <!-- ORIGINAL -->
 
                         <div class="image-panel">
 
@@ -1240,15 +1044,11 @@
 
 
                                 <span class="badge text-bg-light">
-
                                     JPG · PNG · WEBP
-
                                 </span>
 
                             </div>
 
-
-                            <!-- DROP ZONE -->
 
                             <div
                                 id="imageDropZone"
@@ -1292,11 +1092,7 @@
                                 <input
                                     id="imageInput"
                                     type="file"
-                                    accept="
-                                        image/jpeg,
-                                        image/png,
-                                        image/webp
-                                    "
+                                    accept="image/jpeg,image/png,image/webp"
                                     hidden
                                 >
 
@@ -1307,10 +1103,6 @@
 
                             </div>
 
-
-                            <!-- =====================================
-                                 PREVIEW
-                            ====================================== -->
 
                             <div
                                 id="imagePreviewContainer"
@@ -1323,7 +1115,7 @@
                                 <img
                                     id="imagePreview"
                                     src=""
-                                    alt="Vista previa de la imagen seleccionada"
+                                    alt="Vista previa de imagen"
                                 >
 
 
@@ -1344,10 +1136,6 @@
 
                             </div>
 
-
-                            <!-- =====================================
-                                 ANALIZAR
-                            ====================================== -->
 
                             <button
                                 id="btnAnalyzeImage"
@@ -1370,9 +1158,7 @@
                         </div>
 
 
-                        <!-- =========================================
-                             TEXTO TRADUCIDO
-                        ========================================== -->
+                        <!-- TRADUCCIÓN -->
 
                         <div class="image-panel">
 
@@ -1388,9 +1174,7 @@
 
 
                                 <span class="badge text-bg-light">
-
                                     Español ↔ English
-
                                 </span>
 
                             </div>
@@ -1412,9 +1196,8 @@
 
 
                                     <p>
-                                        Selecciona una imagen
-                                        para detectar y traducir
-                                        su contenido textual.
+                                        Selecciona una imagen para
+                                        detectar y traducir su texto.
                                     </p>
 
                                 </div>
@@ -1426,9 +1209,7 @@
                     </div>
 
 
-                    <!-- =============================================
-                         GENERACIÓN VISUAL
-                    ============================================== -->
+                    <!-- GENERACIÓN -->
 
                     <div class="image-generation-action">
 
@@ -1440,8 +1221,8 @@
 
 
                             <span>
-                                Genera una nueva versión visualmente
-                                similar utilizando el texto traducido.
+                                Genera una nueva versión visual
+                                utilizando el texto traducido.
                             </span>
 
                         </div>
@@ -1463,9 +1244,7 @@
                     </div>
 
 
-                    <!-- =============================================
-                         IMAGEN GENERADA
-                    ============================================== -->
+                    <!-- RESULTADO GENERADO -->
 
                     <div
                         id="imageGeneratedResult"
@@ -1474,8 +1253,6 @@
                             d-none
                         "
                     >
-
-                        <!-- HEADER -->
 
                         <div class="generated-image-header">
 
@@ -1497,8 +1274,7 @@
 
                                 <p>
                                     Recreación mediante Inteligencia
-                                    Artificial. Puede presentar variaciones
-                                    respecto a la imagen original.
+                                    Artificial.
                                 </p>
 
                             </div>
@@ -1519,14 +1295,12 @@
                         </div>
 
 
-                        <!-- IMAGEN -->
-
                         <div class="generated-image-canvas">
 
                             <img
                                 id="generatedTranslatedImage"
                                 src=""
-                                alt="Imagen traducida generada por Inteligencia Artificial"
+                                alt="Imagen traducida generada por IA"
                             >
 
                         </div>
@@ -1565,7 +1339,7 @@
 
 
     <!-- =====================================================
-         TOAST GLOBAL
+         TOAST
     ====================================================== -->
 
     <div
@@ -1603,9 +1377,7 @@
                     id="toastTitle"
                     class="me-auto"
                 >
-
                     Información
-
                 </strong>
 
 
@@ -1623,9 +1395,7 @@
                 id="toastMessage"
                 class="toast-body"
             >
-
                 Mensaje
-
             </div>
 
         </div>
@@ -1634,7 +1404,7 @@
 
 
     <!-- =====================================================
-         BOOTSTRAP JS
+         BOOTSTRAP
     ====================================================== -->
 
     <script
@@ -1643,12 +1413,14 @@
 
 
     <!-- =====================================================
-         JAVASCRIPT PRINCIPAL
+         APP
+         IMPORTANTE:
+         v=1.2.1 rompe la caché anterior
     ====================================================== -->
 
     <script
         type="module"
-        src="./assets/js/app.js"
+        src="./assets/js/app.js?v=1.2.1"
     ></script>
 
 </body>
