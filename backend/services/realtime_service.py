@@ -1,7 +1,14 @@
-import json
 import logging
 
-import httpx
+from openai import (
+    OpenAI,
+    AuthenticationError,
+    PermissionDeniedError,
+    RateLimitError,
+    APIConnectionError,
+    BadRequestError,
+    APIStatusError
+)
 
 from backend.core.settings import (
     Settings
@@ -18,7 +25,7 @@ logger = logging.getLogger(
 
 
 # ==========================================================
-# EXCEPCIÓN
+# EXCEPCIÓN CONTROLADA
 # ==========================================================
 
 class RealtimeServiceException(
@@ -50,11 +57,6 @@ class RealtimeServiceException(
 
 class RealtimeService:
 
-    OPENAI_REALTIME_URL = (
-        "https://api.openai.com/v1/realtime/calls"
-    )
-
-
     def __init__(
         self,
         settings: Settings
@@ -63,6 +65,24 @@ class RealtimeService:
         self.settings = (
             settings
         )
+
+
+        self.client = (
+            None
+        )
+
+
+        if (
+            self.settings.openai_configured
+        ):
+
+            self.client = OpenAI(
+
+                api_key=(
+                    self.settings.openai_api_key
+                )
+
+            )
 
 
     # ======================================================
@@ -86,6 +106,19 @@ class RealtimeService:
             )
 
 
+        if (
+            self.client is None
+        ):
+
+            raise RealtimeServiceException(
+                (
+                    "El cliente de OpenAI no pudo "
+                    "ser inicializado."
+                ),
+                500
+            )
+
+
     # ======================================================
     # INSTRUCCIONES
     # ======================================================
@@ -97,11 +130,11 @@ class RealtimeService:
 You are a professional real-time bilingual interpreter
 between Spanish and English.
 
-Your task is to translate every spoken user turn.
+Your job is to translate every spoken user turn.
 
 RULES:
 
-1. Automatically detect whether the user is speaking
+1. Automatically detect whether the user speaks
    Spanish or English.
 
 2. If the user speaks Spanish:
@@ -114,32 +147,44 @@ RULES:
 
 5. Do not answer questions as an assistant.
 
-6. Do not provide advice or additional information.
+6. Do not provide advice.
 
-7. Do not explain the translation.
+7. Do not add explanations.
 
-8. Do not repeat the original sentence.
+8. Do not add introductions.
 
-9. Preserve names, numbers, dates, times, currencies,
-   units, acronyms and technical terminology.
+9. Do not repeat the original message.
 
-10. Preserve the meaning and tone of the speaker.
+10. Preserve names, numbers, dates, currencies,
+    units, acronyms and technical terminology.
 
-11. Prefer natural translations over literal
+11. Preserve the meaning and tone of the speaker.
+
+12. Prefer natural translations instead of literal
     word-for-word translations.
 
-12. Every new spoken turn may use a different language.
-    Detect the language again for every turn.
+13. Detect the source language again for each new
+    spoken turn.
 """.strip()
 
 
     # ======================================================
-    # CONFIGURACIÓN DE SESIÓN
+    # CONFIGURACIÓN MÍNIMA
     # ======================================================
 
     def _session_config(
         self
     ) -> dict:
+
+        """
+        Usamos únicamente campos esenciales.
+
+        Primero queremos confirmar que la conexión
+        WebRTC funciona correctamente.
+
+        Posteriormente agregaremos configuración
+        avanzada de transcripción, VAD y voz.
+        """
 
         return {
 
@@ -154,58 +199,39 @@ RULES:
 
             "output_modalities": [
                 "audio"
-            ],
-
-            "max_output_tokens":
-                1000,
-
-            "audio": {
-
-                "input": {
-
-                    "transcription": {
-
-                        "model":
-                            self.settings
-                            .transcription_model
-
-                    },
-
-                    "turn_detection": {
-
-                        "type":
-                            "server_vad",
-
-                        "threshold":
-                            0.5,
-
-                        "prefix_padding_ms":
-                            300,
-
-                        "silence_duration_ms":
-                            700,
-
-                        "create_response":
-                            True,
-
-                        "interrupt_response":
-                            True
-
-                    }
-
-                },
-
-                "output": {
-
-                    "voice":
-                        self.settings
-                        .realtime_voice
-
-                }
-
-            }
+            ]
 
         }
+
+
+    # ======================================================
+    # OBTENER INFORMACIÓN DE ERROR
+    # ======================================================
+
+    @staticmethod
+    def _get_error_message(
+        error
+    ) -> str:
+
+        message = getattr(
+            error,
+            "message",
+            None
+        )
+
+
+        if (
+            message
+        ):
+
+            return str(
+                message
+            )
+
+
+        return str(
+            error
+        )
 
 
     # ======================================================
@@ -220,14 +246,14 @@ RULES:
         self._ensure_configured()
 
 
-        # ==================================================
-        # VALIDAR SDP
-        # ==================================================
-
         clean_sdp = (
             sdp.strip()
         )
 
+
+        # ==================================================
+        # VALIDAR SDP
+        # ==================================================
 
         if (
             not clean_sdp
@@ -250,209 +276,170 @@ RULES:
 
             raise RealtimeServiceException(
                 (
-                    "La información WebRTC "
-                    "no tiene un formato válido."
+                    "La oferta WebRTC enviada "
+                    "no tiene un formato SDP válido."
                 ),
                 400
             )
 
 
-        # ==================================================
-        # SESIÓN
-        # ==================================================
-
-        session_config = (
-            self._session_config()
-        )
-
-
-        session_json = (
-            json.dumps(
-                session_config,
-                ensure_ascii=False
-            )
-        )
-
-
-        # ==================================================
-        # HEADERS
-        # ==================================================
-        #
-        # IMPORTANTE:
-        #
-        # NO establecer Content-Type manualmente.
-        #
-        # httpx agregará automáticamente:
-        #
-        # multipart/form-data;
-        # boundary=...
-        #
-        # ==================================================
-
-        headers = {
-
-            "Authorization":
-                (
-                    "Bearer "
-                    f"{self.settings.openai_api_key}"
-                ),
-
-            "Accept":
-                "application/sdp"
-
-        }
-
-
-        # ==================================================
-        # MULTIPART
-        # ==================================================
-        #
-        # OpenAI requiere:
-        #
-        # sdp:
-        # application/sdp
-        #
-        # session:
-        # application/json
-        #
-        # ==================================================
-
-        files = {
-
-            "sdp": (
-                None,
-                clean_sdp,
-                "application/sdp"
-            ),
-
-            "session": (
-                None,
-                session_json,
-                "application/json"
-            )
-
-        }
-
-
         try:
 
-            # ==============================================
-            # PETICIÓN OPENAI
-            # ==============================================
+            # =================================================
+            # SDK OFICIAL OPENAI
+            # =================================================
+            #
+            # El SDK se encarga de:
+            #
+            # multipart/form-data
+            # application/sdp
+            # application/json
+            # boundary
+            #
+            # No hacemos multipart manualmente.
+            # =================================================
 
-            with httpx.Client(
-                timeout=30.0
-            ) as client:
+            response = (
+                self.client
+                .realtime
+                .calls
+                .create(
 
-                response = client.post(
+                    sdp=(
+                        clean_sdp
+                    ),
 
-                    self.OPENAI_REALTIME_URL,
+                    session=(
+                        self._session_config()
+                    )
 
-                    headers=headers,
+                )
+            )
 
-                    files=files
 
+            # =================================================
+            # SDP ANSWER
+            # =================================================
+
+            answer_sdp = (
+                response.text.strip()
+            )
+
+
+            if (
+                not answer_sdp
+            ):
+
+                raise RealtimeServiceException(
+                    (
+                        "OpenAI devolvió una respuesta "
+                        "WebRTC vacía."
+                    ),
+                    502
                 )
 
 
-        # ==================================================
-        # TIMEOUT
-        # ==================================================
+            if (
+                not answer_sdp.startswith(
+                    "v=0"
+                )
+            ):
 
-        except httpx.TimeoutException:
+                logger.error(
+                    (
+                        "OpenAI devolvió contenido "
+                        "que no parece SDP: %s"
+                    ),
+                    answer_sdp[:1000]
+                )
 
-            logger.exception(
+
+                raise RealtimeServiceException(
+                    (
+                        "OpenAI devolvió una respuesta "
+                        "WebRTC no válida."
+                    ),
+                    502
+                )
+
+
+            logger.info(
                 (
-                    "Timeout conectando con "
-                    "OpenAI Realtime."
+                    "Sesión WebRTC creada "
+                    "correctamente con modelo %s."
+                ),
+                self.settings.realtime_model
+            )
+
+
+            return answer_sdp
+
+
+        # ==================================================
+        # BAD REQUEST
+        # ==================================================
+
+        except BadRequestError as error:
+
+            openai_message = (
+                self._get_error_message(
+                    error
                 )
+            )
+
+
+            request_id = getattr(
+                error,
+                "request_id",
+                None
+            )
+
+
+            body = getattr(
+                error,
+                "body",
+                None
+            )
+
+
+            logger.error(
+                (
+                    "OpenAI Realtime BadRequest. "
+                    "RequestID=%s "
+                    "Message=%s "
+                    "Body=%s"
+                ),
+                request_id,
+                openai_message,
+                body
             )
 
 
             raise RealtimeServiceException(
                 (
-                    "El servicio de voz tardó "
-                    "demasiado en responder."
-                ),
-                504
-            )
-
-
-        # ==================================================
-        # CONEXIÓN
-        # ==================================================
-
-        except httpx.RequestError as error:
-
-            logger.exception(
-                (
-                    "Error de conexión con "
-                    "OpenAI Realtime: %s"
-                ),
-                str(error)
-            )
-
-
-            raise RealtimeServiceException(
-                (
-                    "No fue posible conectar con "
-                    "el servicio de voz."
+                    "OpenAI rechazó la sesión de voz. "
+                    f"Detalle: {openai_message}"
                 ),
                 502
             )
 
 
         # ==================================================
-        # REQUEST ID
+        # API KEY
         # ==================================================
 
-        request_id = (
-            response.headers.get(
-                "x-request-id",
-                "sin-request-id"
-            )
-        )
-
-
-        logger.info(
-            (
-                "OpenAI Realtime respondió. "
-                "Status=%s RequestID=%s"
-            ),
-            response.status_code,
-            request_id
-        )
-
-
-        # ==================================================
-        # ERRORES OPENAI
-        # ==================================================
-
-        if (
-            response.status_code >= 400
-        ):
+        except AuthenticationError as error:
 
             logger.error(
                 (
-                    "OpenAI Realtime rechazó "
-                    "la solicitud. "
-                    "Status=%s "
-                    "RequestID=%s "
-                    "Body=%s"
+                    "Error de autenticación "
+                    "OpenAI Realtime: %s"
                 ),
-                response.status_code,
-                request_id,
-                response.text[:2000]
+                self._get_error_message(
+                    error
+                )
             )
 
-
-        # ==================================================
-        # AUTENTICACIÓN
-        # ==================================================
-
-        if (
-            response.status_code == 401
-        ):
 
             raise RealtimeServiceException(
                 (
@@ -467,26 +454,44 @@ RULES:
         # PERMISOS
         # ==================================================
 
-        if (
-            response.status_code == 403
-        ):
+        except PermissionDeniedError as error:
+
+            logger.error(
+                (
+                    "Permiso denegado "
+                    "OpenAI Realtime: %s"
+                ),
+                self._get_error_message(
+                    error
+                )
+            )
+
 
             raise RealtimeServiceException(
                 (
                     "La cuenta de OpenAI no tiene "
-                    "acceso al servicio de voz solicitado."
+                    "permiso para utilizar este "
+                    "servicio de voz."
                 ),
                 403
             )
 
 
         # ==================================================
-        # RATE LIMIT
+        # RATE LIMIT / CUOTA
         # ==================================================
 
-        if (
-            response.status_code == 429
-        ):
+        except RateLimitError as error:
+
+            logger.error(
+                (
+                    "Rate limit OpenAI Realtime: %s"
+                ),
+                self._get_error_message(
+                    error
+                )
+            )
+
 
             raise RealtimeServiceException(
                 (
@@ -498,99 +503,102 @@ RULES:
 
 
         # ==================================================
-        # CONFIGURACIÓN INVÁLIDA
+        # CONEXIÓN
         # ==================================================
 
-        if (
-            response.status_code == 400
-        ):
+        except APIConnectionError as error:
+
+            logger.error(
+                (
+                    "Error de conexión "
+                    "OpenAI Realtime: %s"
+                ),
+                self._get_error_message(
+                    error
+                )
+            )
+
 
             raise RealtimeServiceException(
                 (
-                    "OpenAI rechazó la configuración "
-                    "de la sesión de voz."
+                    "No fue posible conectar con "
+                    "OpenAI para iniciar la voz."
                 ),
                 502
             )
+
+
+        # ==================================================
+        # OTRO ERROR HTTP OPENAI
+        # ==================================================
+
+        except APIStatusError as error:
+
+            openai_message = (
+                self._get_error_message(
+                    error
+                )
+            )
+
+
+            logger.error(
+                (
+                    "OpenAI Realtime APIStatusError. "
+                    "Status=%s "
+                    "RequestID=%s "
+                    "Message=%s"
+                ),
+                getattr(
+                    error,
+                    "status_code",
+                    None
+                ),
+                getattr(
+                    error,
+                    "request_id",
+                    None
+                ),
+                openai_message
+            )
+
+
+            raise RealtimeServiceException(
+                (
+                    "OpenAI presentó un error "
+                    "al iniciar la sesión de voz."
+                ),
+                502
+            )
+
+
+        # ==================================================
+        # ERROR CONTROLADO
+        # ==================================================
+
+        except RealtimeServiceException:
+
+            raise
 
 
         # ==================================================
         # OTRO ERROR
         # ==================================================
 
-        if (
-            response.status_code >= 400
-        ):
+        except Exception as error:
 
-            raise RealtimeServiceException(
+            logger.exception(
                 (
-                    "No fue posible crear la sesión "
-                    "de voz en tiempo real."
+                    "Error inesperado creando "
+                    "sesión WebRTC: %s"
                 ),
-                502
-            )
-
-
-        # ==================================================
-        # LEER SDP ANSWER
-        # ==================================================
-
-        answer_sdp = (
-            response.text.strip()
-        )
-
-
-        if (
-            not answer_sdp
-        ):
-
-            raise RealtimeServiceException(
-                (
-                    "OpenAI devolvió una conexión "
-                    "WebRTC vacía."
-                ),
-                502
-            )
-
-
-        # ==================================================
-        # VALIDAR SDP ANSWER
-        # ==================================================
-
-        if (
-            not answer_sdp.startswith(
-                "v=0"
-            )
-        ):
-
-            logger.error(
-                (
-                    "OpenAI devolvió una respuesta "
-                    "que no parece SDP. "
-                    "RequestID=%s Body=%s"
-                ),
-                request_id,
-                answer_sdp[:1000]
+                str(error)
             )
 
 
             raise RealtimeServiceException(
                 (
-                    "OpenAI devolvió una respuesta "
-                    "WebRTC no válida."
+                    "Ocurrió un error inesperado "
+                    "al iniciar la conversación de voz."
                 ),
-                502
+                500
             )
-
-
-        logger.info(
-            (
-                "Sesión WebRTC creada "
-                "correctamente. "
-                "RequestID=%s"
-            ),
-            request_id
-        )
-
-
-        return answer_sdp
