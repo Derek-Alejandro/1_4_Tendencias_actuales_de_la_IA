@@ -1,16 +1,18 @@
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import (
+    BaseModel,
+    Field
+)
 
 
 # ==========================================================
-# HISTORIAL
+# HISTORIAL DEL CHAT
 # ==========================================================
 
-class ChatHistoryItem(BaseModel):
-    """
-    Representa un intercambio anterior de la conversación.
-    """
+class ChatHistoryItem(
+    BaseModel
+):
 
     user_original: str = Field(
         ...,
@@ -31,13 +33,12 @@ class ChatHistoryItem(BaseModel):
 
 
 # ==========================================================
-# PETICIÓN
+# PETICIÓN CHAT
 # ==========================================================
 
-class ChatRequest(BaseModel):
-    """
-    Información enviada desde el frontend.
-    """
+class ChatRequest(
+    BaseModel
+):
 
     message: str = Field(
         ...,
@@ -45,16 +46,20 @@ class ChatRequest(BaseModel):
         max_length=2000
     )
 
-    history: list[ChatHistoryItem] = Field(
+    history: list[
+        ChatHistoryItem
+    ] = Field(
         default_factory=list
     )
 
 
 # ==========================================================
-# RESULTADO
+# RESULTADO CHAT
 # ==========================================================
 
-class ChatResult(BaseModel):
+class ChatResult(
+    BaseModel
+):
 
     source_language: Literal[
         "es",
@@ -76,11 +81,28 @@ class ChatResult(BaseModel):
 
 
 # ==========================================================
-# RESPUESTA HTTP
+# RESPUESTA CHAT
 # ==========================================================
 
-class ChatApiResponse(BaseModel):
+class ChatApiResponse(
+    BaseModel
+):
 
     success: bool
 
     data: ChatResult
+
+
+# ==========================================================
+# PETICIÓN REALTIME WEBRTC
+# ==========================================================
+
+class RealtimeSessionRequest(
+    BaseModel
+):
+
+    sdp: str = Field(
+        ...,
+        min_length=20,
+        max_length=100000
+    )

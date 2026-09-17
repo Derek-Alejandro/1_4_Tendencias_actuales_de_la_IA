@@ -9,22 +9,33 @@ from fastapi.middleware.cors import (
     CORSMiddleware
 )
 
+
 from backend.core.settings import (
     settings
 )
 
+
 from backend.models.translation import (
     ChatRequest,
-    ChatApiResponse
+    ChatApiResponse,
+    RealtimeSessionRequest
 )
+
 
 from backend.services.openai_service import (
     OpenAIService,
     OpenAIServiceException
 )
 
+
 from backend.services.chat_service import (
     ChatService
+)
+
+
+from backend.services.realtime_service import (
+    RealtimeService,
+    RealtimeServiceException
 )
 
 
@@ -97,8 +108,13 @@ chat_service = ChatService(
 )
 
 
+realtime_service = RealtimeService(
+    settings
+)
+
+
 # ==========================================================
-# ROOT API
+# API
 # ==========================================================
 
 @app.get(
@@ -108,14 +124,17 @@ async def root():
 
     return {
 
-        "success": True,
+        "success":
+            True,
 
-        "message": (
-            "Traductor Inteligente Multimodal API "
-            "funcionando correctamente."
-        ),
+        "message":
+            (
+                "Traductor Inteligente Multimodal API "
+                "funcionando correctamente."
+            ),
 
-        "version": "1.0.0"
+        "version":
+            "1.0.0"
     }
 
 
@@ -128,29 +147,43 @@ async def root():
 )
 async def health():
 
+    configured = (
+        settings.openai_configured
+    )
+
+
     return {
 
-        "success": True,
+        "success":
+            True,
 
-        "status": "online",
+        "status":
+            "online",
 
-        "openai_configured": (
-            settings.openai_configured
-        ),
+        "openai_configured":
+            configured,
 
         "modules": {
 
-            "chat": (
-                "ready"
-                if settings.openai_configured
-                else "configuration_required"
-            ),
+            "chat":
+                (
+                    "ready"
+                    if configured
+                    else "configuration_required"
+                ),
 
-            "voice": "pending",
+            "voice":
+                (
+                    "ready"
+                    if configured
+                    else "configuration_required"
+                ),
 
-            "documents": "pending",
+            "documents":
+                "pending",
 
-            "images": "pending"
+            "images":
+                "pending"
         }
     }
 
@@ -185,15 +218,13 @@ async def chat(
 
         return {
 
-            "success": True,
+            "success":
+                True,
 
-            "data": result
+            "data":
+                result
         }
 
-
-    # ======================================================
-    # ENTRADA INCORRECTA
-    # ======================================================
 
     except ValueError as error:
 
@@ -206,10 +237,6 @@ async def chat(
             )
         )
 
-
-    # ======================================================
-    # ERROR CONTROLADO OPENAI
-    # ======================================================
 
     except OpenAIServiceException as error:
 
@@ -225,10 +252,6 @@ async def chat(
         )
 
 
-    # ======================================================
-    # OTRO ERROR
-    # ======================================================
-
     except Exception:
 
         logger.exception(
@@ -243,5 +266,74 @@ async def chat(
             detail=(
                 "Ocurrió un error interno "
                 "al procesar el mensaje."
+            )
+        )
+
+
+# ==========================================================
+# VOZ REALTIME
+# ==========================================================
+
+@app.post(
+    "/api/realtime/session"
+)
+def create_realtime_session(
+    request: RealtimeSessionRequest
+):
+
+    try:
+
+        answer_sdp = (
+            realtime_service
+            .create_webrtc_session(
+                request.sdp
+            )
+        )
+
+
+        return {
+
+            "success":
+                True,
+
+            "data": {
+
+                "sdp":
+                    answer_sdp
+            }
+        }
+
+
+    except RealtimeServiceException as error:
+
+        raise HTTPException(
+
+            status_code=(
+                error.status_code
+            ),
+
+            detail=(
+                error.user_message
+            )
+        )
+
+
+    except Exception:
+
+        logger.exception(
+            (
+                "Error inesperado en "
+                "/api/realtime/session"
+            )
+        )
+
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail=(
+                "Ocurrió un error interno "
+                "al crear la conversación por voz."
             )
         )

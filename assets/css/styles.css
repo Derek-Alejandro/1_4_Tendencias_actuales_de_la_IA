@@ -1562,6 +1562,141 @@ body {
 
 }
 
+/* =========================================================
+   TRANSCRIPCIÓN DE VOZ
+========================================================= */
+
+.voice-transcript-message {
+
+    margin-bottom:
+        15px;
+
+    padding:
+        14px 16px;
+
+    border-radius:
+        14px;
+
+    animation:
+        voiceMessageIn
+        0.2s ease;
+
+}
+
+
+.voice-user-message {
+
+    margin-left:
+        35px;
+
+    border:
+        1px solid #bfdbfe;
+
+    background:
+        #eff6ff;
+
+}
+
+
+.voice-ai-message {
+
+    margin-right:
+        35px;
+
+    border:
+        1px solid #ddd6fe;
+
+    background:
+        #f5f3ff;
+
+}
+
+
+.voice-transcript-header {
+
+    margin-bottom:
+        6px;
+
+}
+
+
+.voice-transcript-header strong {
+
+    color:
+        var(--text-primary);
+
+    font-size:
+        0.78rem;
+
+}
+
+
+.voice-transcript-message p {
+
+    margin:
+        0;
+
+    color:
+        #334155;
+
+    line-height:
+        1.55;
+
+    white-space:
+        pre-wrap;
+
+    overflow-wrap:
+        anywhere;
+
+}
+
+
+@keyframes voiceMessageIn {
+
+    from {
+
+        opacity:
+            0;
+
+        transform:
+            translateY(5px);
+
+    }
+
+
+    to {
+
+        opacity:
+            1;
+
+        transform:
+            translateY(0);
+
+    }
+
+}
+
+
+@media (
+    max-width: 767.98px
+) {
+
+    .voice-user-message {
+
+        margin-left:
+            10px;
+
+    }
+
+
+    .voice-ai-message {
+
+        margin-right:
+            10px;
+
+    }
+
+}
 
 /* =========================================================
    DOCUMENTOS

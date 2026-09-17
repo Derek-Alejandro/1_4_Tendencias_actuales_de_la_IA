@@ -12,6 +12,10 @@ import {
 } from "./chat.js";
 
 
+import {
+    VoiceModule
+} from "./voice.js";
+
 // =========================================================
 // CONFIGURACIÓN GENERAL
 // =========================================================
@@ -273,43 +277,51 @@ const chatModule =
 // =========================================================
 // VOZ
 // =========================================================
+// =========================================================
+// VOZ EN TIEMPO REAL
+// =========================================================
 
-const btnVoiceConversation =
-    document.getElementById(
-        "btnVoiceConversation"
-    );
+const voiceModule =
+    new VoiceModule({
 
+        apiBaseUrl:
+            APP_CONFIG.apiBaseUrl,
 
-const microphoneAnimation =
-    document.getElementById(
-        "microphoneAnimation"
-    );
+        button:
+            document.getElementById(
+                "btnVoiceConversation"
+            ),
 
+        microphoneAnimation:
+            document.getElementById(
+                "microphoneAnimation"
+            ),
 
-const voiceTitle =
-    document.getElementById(
-        "voiceTitle"
-    );
+        title:
+            document.getElementById(
+                "voiceTitle"
+            ),
 
+        status:
+            document.getElementById(
+                "voiceStatus"
+            ),
 
-const voiceStatus =
-    document.getElementById(
-        "voiceStatus"
-    );
+        connectionBadge:
+            document.getElementById(
+                "voiceConnectionBadge"
+            ),
 
+        transcript:
+            document.getElementById(
+                "voiceTranscript"
+            ),
 
-const voiceConnectionBadge =
-    document.getElementById(
-        "voiceConnectionBadge"
-    );
+        showToast:
+            showToast
 
+    });
 
-let microphoneStream =
-    null;
-
-
-let microphoneActive =
-    false;
 
 
 // =========================================================
@@ -1460,7 +1472,6 @@ function formatFileSize(
 
 }
 
-
 // =========================================================
 // CIERRE DE PÁGINA
 // =========================================================
@@ -1469,26 +1480,12 @@ window.addEventListener(
     "beforeunload",
     () => {
 
-        // Detener micrófono
+        // Cerrar conversación de voz.
 
-        if (
-            microphoneStream
-        ) {
-
-            microphoneStream
-                .getTracks()
-                .forEach(
-                    track => {
-
-                        track.stop();
-
-                    }
-                );
-
-        }
+        voiceModule.destroy();
 
 
-        // Liberar URL temporal de imagen
+        // Liberar vista previa de imagen.
 
         if (
             imagePreviewUrl
