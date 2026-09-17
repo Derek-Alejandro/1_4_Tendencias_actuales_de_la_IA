@@ -7,7 +7,7 @@ from pydantic import (
 
 
 # ==========================================================
-# CHAT - HISTORIAL
+# CHAT
 # ==========================================================
 
 class ChatHistoryItem(
@@ -32,10 +32,6 @@ class ChatHistoryItem(
     ]
 
 
-# ==========================================================
-# CHAT - REQUEST
-# ==========================================================
-
 class ChatRequest(
     BaseModel
 ):
@@ -52,10 +48,6 @@ class ChatRequest(
         default_factory=list
     )
 
-
-# ==========================================================
-# CHAT - RESULTADO
-# ==========================================================
 
 class ChatResult(
     BaseModel
@@ -80,10 +72,6 @@ class ChatResult(
     assistant_response_translation: str
 
 
-# ==========================================================
-# CHAT - RESPUESTA
-# ==========================================================
-
 class ChatApiResponse(
     BaseModel
 ):
@@ -94,7 +82,7 @@ class ChatApiResponse(
 
 
 # ==========================================================
-# REALTIME - REQUEST
+# REALTIME
 # ==========================================================
 
 class RealtimeSessionRequest(
@@ -109,7 +97,7 @@ class RealtimeSessionRequest(
 
 
 # ==========================================================
-# DOCUMENTOS - SECCIÓN TRADUCIDA
+# DOCUMENTOS
 # ==========================================================
 
 class DocumentSectionResult(
@@ -126,10 +114,6 @@ class DocumentSectionResult(
 
     translated_text: str
 
-
-# ==========================================================
-# DOCUMENTOS - RESULTADO
-# ==========================================================
 
 class DocumentResult(
     BaseModel
@@ -160,10 +144,6 @@ class DocumentResult(
     ]
 
 
-# ==========================================================
-# DOCUMENTOS - RESPUESTA API
-# ==========================================================
-
 class DocumentApiResponse(
     BaseModel
 ):
@@ -172,10 +152,6 @@ class DocumentApiResponse(
 
     data: DocumentResult
 
-
-# ==========================================================
-# DESCARGA - SECCIÓN
-# ==========================================================
 
 class DocumentDownloadSection(
     BaseModel
@@ -192,10 +168,6 @@ class DocumentDownloadSection(
         max_length=10000
     )
 
-
-# ==========================================================
-# DESCARGA - REQUEST
-# ==========================================================
 
 class DocumentDownloadRequest(
     BaseModel
@@ -220,6 +192,128 @@ class DocumentDownloadRequest(
 
     sections: list[
         DocumentDownloadSection
+    ] = Field(
+        min_length=1
+    )
+
+
+# ==========================================================
+# IMÁGENES - TEXTO INDIVIDUAL
+# ==========================================================
+
+class ImageTextItem(
+    BaseModel
+):
+
+    original_text: str
+
+    translated_text: str
+
+
+# ==========================================================
+# IMÁGENES - RESULTADO
+# ==========================================================
+
+class ImageAnalysisResult(
+    BaseModel
+):
+
+    file_name: str
+
+    source_language: Literal[
+        "es",
+        "en",
+        "unknown"
+    ]
+
+    target_language: Literal[
+        "es",
+        "en",
+        "unknown"
+    ]
+
+    has_readable_text: bool
+
+    confidence: Literal[
+        "high",
+        "medium",
+        "low"
+    ]
+
+    orientation: Literal[
+        "landscape",
+        "portrait",
+        "square"
+    ]
+
+    detected_text: str
+
+    translated_text: str
+
+    visual_description: str
+
+    text_items: list[
+        ImageTextItem
+    ]
+
+
+# ==========================================================
+# IMÁGENES - API RESPONSE
+# ==========================================================
+
+class ImageAnalysisApiResponse(
+    BaseModel
+):
+
+    success: bool
+
+    data: ImageAnalysisResult
+
+
+# ==========================================================
+# IMÁGENES - GENERAR VERSIÓN TRADUCIDA
+# ==========================================================
+
+class ImageGenerateRequest(
+    BaseModel
+):
+
+    original_file_name: str = Field(
+        ...,
+        min_length=1,
+        max_length=255
+    )
+
+    source_language: Literal[
+        "es",
+        "en"
+    ]
+
+    target_language: Literal[
+        "es",
+        "en"
+    ]
+
+    orientation: Literal[
+        "landscape",
+        "portrait",
+        "square"
+    ]
+
+    translated_text: str = Field(
+        ...,
+        min_length=1,
+        max_length=12000
+    )
+
+    visual_description: str = Field(
+        ...,
+        min_length=1,
+        max_length=6000
+    )
+
+    text_items: list[
+        ImageTextItem
     ] = Field(
         min_length=1
     )

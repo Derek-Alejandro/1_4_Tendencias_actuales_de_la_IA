@@ -20,7 +20,9 @@
     </title>
 
 
-    <!-- Bootstrap -->
+    <!-- =====================================================
+         BOOTSTRAP
+    ====================================================== -->
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
@@ -28,7 +30,9 @@
     >
 
 
-    <!-- Bootstrap Icons -->
+    <!-- =====================================================
+         BOOTSTRAP ICONS
+    ====================================================== -->
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
@@ -36,7 +40,9 @@
     >
 
 
-    <!-- CSS -->
+    <!-- =====================================================
+         CSS PROPIO
+    ====================================================== -->
 
     <link
         rel="stylesheet"
@@ -48,16 +54,38 @@
 
 <body>
 
+
     <!-- =====================================================
          NAVBAR
     ====================================================== -->
 
-    <nav class="navbar app-navbar sticky-top">
+    <nav
+        class="
+            navbar
+            app-navbar
+            sticky-top
+        "
+    >
 
-        <div class="container-fluid px-3 px-lg-4">
+        <div
+            class="
+                container-fluid
+                px-3
+                px-lg-4
+            "
+        >
+
+            <!-- =============================================
+                 LOGO / MARCA
+            ============================================== -->
 
             <a
-                class="navbar-brand d-flex align-items-center gap-3"
+                class="
+                    navbar-brand
+                    d-flex
+                    align-items-center
+                    gap-3
+                "
                 href="#"
                 aria-label="Traductor Inteligente Multimodal"
             >
@@ -89,10 +117,26 @@
             </a>
 
 
-            <div class="d-flex align-items-center gap-3">
+            <!-- =============================================
+                 ESTADO / MENÚ MÓVIL
+            ============================================== -->
+
+            <div
+                class="
+                    d-flex
+                    align-items-center
+                    gap-3
+                "
+            >
 
                 <div
-                    class="navbar-status d-none d-md-flex align-items-center gap-2"
+                    class="
+                        navbar-status
+                        d-none
+                        d-md-flex
+                        align-items-center
+                        gap-2
+                    "
                 >
 
                     <span class="status-dot"></span>
@@ -103,7 +147,10 @@
 
 
                 <button
-                    class="navbar-toggler d-lg-none"
+                    class="
+                        navbar-toggler
+                        d-lg-none
+                    "
                     type="button"
                     data-bs-toggle="offcanvas"
                     data-bs-target="#mobileMenu"
@@ -127,7 +174,10 @@
     ====================================================== -->
 
     <div
-        class="offcanvas offcanvas-start"
+        class="
+            offcanvas
+            offcanvas-start
+        "
         tabindex="-1"
         id="mobileMenu"
         aria-labelledby="mobileMenuLabel"
@@ -136,7 +186,11 @@
         <div class="offcanvas-header">
 
             <h2
-                class="offcanvas-title h5 mb-0"
+                class="
+                    offcanvas-title
+                    h5
+                    mb-0
+                "
                 id="mobileMenuLabel"
             >
 
@@ -159,9 +213,15 @@
 
             <div class="mobile-navigation">
 
+
+                <!-- CHAT -->
+
                 <button
                     type="button"
-                    class="mobile-nav-button active"
+                    class="
+                        mobile-nav-button
+                        active
+                    "
                     data-module-target="chat"
                 >
 
@@ -173,6 +233,8 @@
 
                 </button>
 
+
+                <!-- VOZ -->
 
                 <button
                     type="button"
@@ -189,6 +251,8 @@
                 </button>
 
 
+                <!-- DOCUMENTOS -->
+
                 <button
                     type="button"
                     class="mobile-nav-button"
@@ -203,6 +267,8 @@
 
                 </button>
 
+
+                <!-- IMÁGENES -->
 
                 <button
                     type="button"
@@ -226,20 +292,36 @@
 
 
     <!-- =====================================================
-         CONTENIDO
+         CONTENIDO PRINCIPAL
     ====================================================== -->
 
-    <main class="container-fluid app-container">
+    <main
+        class="
+            container-fluid
+            app-container
+        "
+    >
 
-        <div class="row g-0 app-layout">
+        <div
+            class="
+                row
+                g-0
+                app-layout
+            "
+        >
 
 
             <!-- =================================================
-                 SIDEBAR
+                 SIDEBAR DESKTOP
             ================================================== -->
 
             <aside
-                class="col-lg-2 d-none d-lg-block app-sidebar"
+                class="
+                    col-lg-2
+                    d-none
+                    d-lg-block
+                    app-sidebar
+                "
             >
 
                 <div class="sidebar-content">
@@ -251,9 +333,14 @@
                     </div>
 
 
+                    <!-- CHAT -->
+
                     <button
                         type="button"
-                        class="sidebar-button active"
+                        class="
+                            sidebar-button
+                            active
+                        "
                         data-module-target="chat"
                     >
 
@@ -265,6 +352,8 @@
 
                     </button>
 
+
+                    <!-- VOZ -->
 
                     <button
                         type="button"
@@ -281,6 +370,8 @@
                     </button>
 
 
+                    <!-- DOCUMENTOS -->
+
                     <button
                         type="button"
                         class="sidebar-button"
@@ -295,6 +386,8 @@
 
                     </button>
 
+
+                    <!-- IMÁGENES -->
 
                     <button
                         type="button"
@@ -311,6 +404,8 @@
                     </button>
 
 
+                    <!-- SEGURIDAD -->
+
                     <div class="sidebar-info">
 
                         <i class="bi bi-shield-lock"></i>
@@ -325,7 +420,8 @@
 
                             <small>
                                 Las credenciales privadas
-                                permanecen únicamente en el backend.
+                                permanecen únicamente
+                                en el backend.
                             </small>
 
                         </div>
@@ -342,18 +438,27 @@
             ================================================== -->
 
             <section
-                class="col-12 col-lg-10 workspace"
+                class="
+                    col-12
+                    col-lg-10
+                    workspace
+                "
             >
 
 
                 <!-- =================================================
-                     CHAT
+                     MÓDULO CHAT
                 ================================================== -->
 
                 <section
                     id="module-chat"
-                    class="app-module active"
+                    class="
+                        app-module
+                        active
+                    "
                 >
+
+                    <!-- HEADER -->
 
                     <div class="module-header">
 
@@ -399,7 +504,11 @@
                     </div>
 
 
+                    <!-- CHAT -->
+
                     <div class="chat-card">
+
+                        <!-- MENSAJES -->
 
                         <div
                             id="chatMessages"
@@ -449,6 +558,8 @@
                         </div>
 
 
+                        <!-- COMPOSER -->
+
                         <div class="chat-composer">
 
                             <div class="composer-info">
@@ -460,7 +571,9 @@
 
 
                                 <span id="characterCounter">
+
                                     0 / 2000
+
                                 </span>
 
                             </div>
@@ -481,13 +594,25 @@
                                 <button
                                     id="btnSendChat"
                                     type="button"
-                                    class="btn btn-primary send-button"
+                                    class="
+                                        btn
+                                        btn-primary
+                                        send-button
+                                    "
                                 >
 
                                     <i class="bi bi-send-fill"></i>
 
-                                    <span class="d-none d-sm-inline">
+
+                                    <span
+                                        class="
+                                            d-none
+                                            d-sm-inline
+                                        "
+                                    >
+
                                         Enviar
+
                                     </span>
 
                                 </button>
@@ -502,13 +627,15 @@
 
 
                 <!-- =================================================
-                     VOZ
+                     MÓDULO VOZ
                 ================================================== -->
 
                 <section
                     id="module-voice"
                     class="app-module"
                 >
+
+                    <!-- HEADER -->
 
                     <div class="module-header">
 
@@ -539,15 +666,22 @@
                     </div>
 
 
+                    <!-- PRIVACIDAD -->
+
                     <div class="privacy-notice mb-4">
 
                         <i class="bi bi-shield-lock-fill"></i>
 
+
                         <p>
+
                             <strong>Privacidad:</strong>
-                            el audio se procesa durante la sesión
-                            de traducción. Evita compartir información
+
+                            el audio se procesa durante
+                            la sesión de traducción.
+                            Evita compartir información
                             sensible o confidencial.
+
                         </p>
 
                     </div>
@@ -556,7 +690,9 @@
                     <div class="voice-grid">
 
 
-                        <!-- CONTROL -->
+                        <!-- =========================================
+                             CONTROL DE VOZ
+                        ========================================== -->
 
                         <div class="voice-control-card">
 
@@ -565,9 +701,21 @@
                                 class="microphone-circle"
                             >
 
-                                <span class="pulse pulse-1"></span>
+                                <span
+                                    class="
+                                        pulse
+                                        pulse-1
+                                    "
+                                ></span>
 
-                                <span class="pulse pulse-2"></span>
+
+                                <span
+                                    class="
+                                        pulse
+                                        pulse-2
+                                    "
+                                ></span>
+
 
                                 <i class="bi bi-mic-fill"></i>
 
@@ -594,7 +742,11 @@
 
                             <span
                                 id="voiceConnectionBadge"
-                                class="badge text-bg-secondary mb-3"
+                                class="
+                                    badge
+                                    text-bg-secondary
+                                    mb-3
+                                "
                             >
 
                                 Desconectado
@@ -634,7 +786,9 @@
                         </div>
 
 
-                        <!-- TRANSCRIPCIÓN -->
+                        <!-- =========================================
+                             TRANSCRIPCIÓN
+                        ========================================== -->
 
                         <div class="transcript-card">
 
@@ -650,7 +804,9 @@
 
 
                                 <span class="badge text-bg-light">
+
                                     Tiempo real
+
                                 </span>
 
                             </div>
@@ -668,8 +824,8 @@
 
 
                                     <p>
-                                        Las frases habladas y sus
-                                        traducciones aparecerán aquí.
+                                        Las frases habladas y
+                                        sus traducciones aparecerán aquí.
                                     </p>
 
                                 </div>
@@ -684,13 +840,15 @@
 
 
                 <!-- =================================================
-                     DOCUMENTOS
+                     MÓDULO DOCUMENTOS
                 ================================================== -->
 
                 <section
                     id="module-documents"
                     class="app-module"
                 >
+
+                    <!-- HEADER -->
 
                     <div class="module-header">
 
@@ -721,6 +879,8 @@
                     </div>
 
 
+                    <!-- PRIVACIDAD -->
+
                     <div class="privacy-notice mb-4">
 
                         <i class="bi bi-shield-lock-fill"></i>
@@ -740,10 +900,14 @@
                     </div>
 
 
+                    <!-- LAYOUT -->
+
                     <div class="upload-layout">
 
 
-                        <!-- CARGA -->
+                        <!-- =========================================
+                             CARGA DEL DOCUMENTO
+                        ========================================== -->
 
                         <div class="upload-card">
 
@@ -765,8 +929,8 @@
 
 
                                 <p>
-                                    Arrastra el archivo aquí o
-                                    selecciónalo desde tu dispositivo.
+                                    Arrastra el archivo aquí
+                                    o selecciónalo desde tu dispositivo.
                                 </p>
 
 
@@ -802,7 +966,10 @@
 
                             <div
                                 id="documentSelected"
-                                class="selected-file d-none"
+                                class="
+                                    selected-file
+                                    d-none
+                                "
                             >
 
                                 <div class="selected-file-icon">
@@ -815,12 +982,16 @@
                                 <div class="selected-file-info">
 
                                     <strong id="documentFileName">
+
                                         Documento
+
                                     </strong>
 
 
                                     <span id="documentFileSize">
+
                                         0 KB
+
                                     </span>
 
                                 </div>
@@ -829,7 +1000,11 @@
                                 <button
                                     id="btnRemoveDocument"
                                     type="button"
-                                    class="btn btn-sm btn-outline-danger"
+                                    class="
+                                        btn
+                                        btn-sm
+                                        btn-outline-danger
+                                    "
                                     aria-label="Eliminar documento"
                                 >
 
@@ -840,10 +1015,17 @@
                             </div>
 
 
+                            <!-- BOTÓN TRADUCIR -->
+
                             <button
                                 id="btnTranslateDocument"
                                 type="button"
-                                class="btn btn-primary w-100 mt-3"
+                                class="
+                                    btn
+                                    btn-primary
+                                    w-100
+                                    mt-3
+                                "
                                 disabled
                             >
 
@@ -853,6 +1035,8 @@
 
                             </button>
 
+
+                            <!-- FORMATOS -->
 
                             <div class="document-formats mt-3">
 
@@ -887,9 +1071,16 @@
                         </div>
 
 
-                        <!-- RESULTADO -->
+                        <!-- =========================================
+                             RESULTADO DEL DOCUMENTO
+                        ========================================== -->
 
-                        <div class="result-card document-result-card">
+                        <div
+                            class="
+                                result-card
+                                document-result-card
+                            "
+                        >
 
                             <div class="result-card-header">
 
@@ -916,9 +1107,18 @@
                                 class="document-result-content"
                             >
 
-                                <div class="result-empty">
+                                <div
+                                    class="
+                                        result-empty
+                                        document-modern-empty
+                                    "
+                                >
 
-                                    <i class="bi bi-file-earmark-text"></i>
+                                    <div class="document-empty-icon">
+
+                                        <i class="bi bi-file-earmark-text"></i>
+
+                                    </div>
 
 
                                     <h3>
@@ -927,8 +1127,14 @@
 
 
                                     <p>
-                                        Selecciona un archivo y presiona
-                                        <strong>Traducir documento</strong>.
+
+                                        Selecciona un archivo
+                                        PDF, DOCX o TXT y presiona
+
+                                        <strong>
+                                            Traducir documento
+                                        </strong>.
+
                                     </p>
 
                                 </div>
@@ -943,13 +1149,17 @@
 
 
                 <!-- =================================================
-                     IMÁGENES
+                     MÓDULO IMÁGENES
                 ================================================== -->
 
                 <section
                     id="module-images"
                     class="app-module"
                 >
+
+                    <!-- =============================================
+                         HEADER
+                    ============================================== -->
 
                     <div class="module-header">
 
@@ -965,21 +1175,26 @@
 
 
                             <h1>
-                                Traducción de imágenes
+                                Traducción visual de imágenes
                             </h1>
 
 
                             <p>
-                                Carga una imagen con texto.
-                                En la siguiente etapa la IA interpretará
-                                el contenido, lo traducirá y generará
-                                una versión visual traducida.
+                                Sube una fotografía, anuncio, menú,
+                                señalización, captura o imagen con texto.
+                                La Inteligencia Artificial identificará
+                                el contenido y lo traducirá entre
+                                español e inglés.
                             </p>
 
                         </div>
 
                     </div>
 
+
+                    <!-- =============================================
+                         PRIVACIDAD
+                    ============================================== -->
 
                     <div class="privacy-notice mb-4">
 
@@ -990,18 +1205,26 @@
 
                             <strong>Privacidad:</strong>
 
-                            evita subir imágenes con datos sensibles.
-                            Los formatos admitidos son JPG, PNG y WEBP.
+                            la imagen será enviada al backend seguro
+                            para su procesamiento mediante Inteligencia
+                            Artificial. Evita fotografías que contengan
+                            información sensible o confidencial.
 
                         </p>
 
                     </div>
 
 
-                    <div class="image-workspace">
+                    <!-- =============================================
+                         IMAGEN ORIGINAL + TEXTO TRADUCIDO
+                    ============================================== -->
+
+                    <div class="image-translation-layout">
 
 
-                        <!-- ORIGINAL -->
+                        <!-- =========================================
+                             IMAGEN ORIGINAL
+                        ========================================== -->
 
                         <div class="image-panel">
 
@@ -1015,12 +1238,24 @@
 
                                 </h2>
 
+
+                                <span class="badge text-bg-light">
+
+                                    JPG · PNG · WEBP
+
+                                </span>
+
                             </div>
 
 
+                            <!-- DROP ZONE -->
+
                             <div
                                 id="imageDropZone"
-                                class="drop-zone image-drop-zone"
+                                class="
+                                    drop-zone
+                                    image-drop-zone
+                                "
                             >
 
                                 <div class="drop-icon">
@@ -1036,8 +1271,8 @@
 
 
                                 <p>
-                                    Arrastra una imagen aquí o
-                                    selecciónala desde tu dispositivo.
+                                    Arrastra una imagen aquí
+                                    o selecciónala desde tu dispositivo.
                                 </p>
 
 
@@ -1057,7 +1292,11 @@
                                 <input
                                     id="imageInput"
                                     type="file"
-                                    accept="image/jpeg,image/png,image/webp"
+                                    accept="
+                                        image/jpeg,
+                                        image/png,
+                                        image/webp
+                                    "
                                     hidden
                                 >
 
@@ -1069,9 +1308,16 @@
                             </div>
 
 
+                            <!-- =====================================
+                                 PREVIEW
+                            ====================================== -->
+
                             <div
                                 id="imagePreviewContainer"
-                                class="image-preview-container d-none"
+                                class="
+                                    image-preview-container
+                                    d-none
+                                "
                             >
 
                                 <img
@@ -1084,7 +1330,11 @@
                                 <button
                                     id="btnRemoveImage"
                                     type="button"
-                                    class="btn btn-light image-remove-button"
+                                    class="
+                                        btn
+                                        btn-light
+                                        image-remove-button
+                                    "
                                     aria-label="Eliminar imagen"
                                 >
 
@@ -1094,10 +1344,35 @@
 
                             </div>
 
+
+                            <!-- =====================================
+                                 ANALIZAR
+                            ====================================== -->
+
+                            <button
+                                id="btnAnalyzeImage"
+                                type="button"
+                                class="
+                                    btn
+                                    btn-primary
+                                    w-100
+                                    mt-3
+                                "
+                                disabled
+                            >
+
+                                <i class="bi bi-search"></i>
+
+                                Analizar y traducir imagen
+
+                            </button>
+
                         </div>
 
 
-                        <!-- RESULTADO -->
+                        <!-- =========================================
+                             TEXTO TRADUCIDO
+                        ========================================== -->
 
                         <div class="image-panel">
 
@@ -1105,30 +1380,44 @@
 
                                 <h2>
 
-                                    <i class="bi bi-stars me-2"></i>
+                                    <i class="bi bi-translate me-2"></i>
 
-                                    Resultado traducido
+                                    Texto traducido
 
                                 </h2>
+
+
+                                <span class="badge text-bg-light">
+
+                                    Español ↔ English
+
+                                </span>
 
                             </div>
 
 
-                            <div class="generated-image-placeholder">
+                            <div
+                                id="imageTranslationResult"
+                                class="image-translation-result"
+                            >
 
-                                <i class="bi bi-image-alt"></i>
+                                <div class="image-result-empty">
+
+                                    <i class="bi bi-textarea-t"></i>
 
 
-                                <h3>
-                                    Imagen traducida
-                                </h3>
+                                    <h3>
+                                        Análisis visual
+                                    </h3>
 
 
-                                <p>
-                                    El resultado visual traducido aparecerá
-                                    aquí cuando conectemos el módulo
-                                    de imágenes.
-                                </p>
+                                    <p>
+                                        Selecciona una imagen
+                                        para detectar y traducir
+                                        su contenido textual.
+                                    </p>
+
+                                </div>
 
                             </div>
 
@@ -1137,20 +1426,25 @@
                     </div>
 
 
-                    <div class="image-actions">
+                    <!-- =============================================
+                         GENERACIÓN VISUAL
+                    ============================================== -->
 
-                        <button
-                            id="btnAnalyzeImage"
-                            type="button"
-                            class="btn btn-outline-primary"
-                            disabled
-                        >
+                    <div class="image-generation-action">
 
-                            <i class="bi bi-search"></i>
+                        <div>
 
-                            Analizar y traducir texto
+                            <strong>
+                                Recreación visual traducida
+                            </strong>
 
-                        </button>
+
+                            <span>
+                                Genera una nueva versión visualmente
+                                similar utilizando el texto traducido.
+                            </span>
+
+                        </div>
 
 
                         <button
@@ -1162,9 +1456,80 @@
 
                             <i class="bi bi-stars"></i>
 
-                            Generar versión traducida
+                            Generar imagen traducida
 
                         </button>
+
+                    </div>
+
+
+                    <!-- =============================================
+                         IMAGEN GENERADA
+                    ============================================== -->
+
+                    <div
+                        id="imageGeneratedResult"
+                        class="
+                            generated-image-result
+                            d-none
+                        "
+                    >
+
+                        <!-- HEADER -->
+
+                        <div class="generated-image-header">
+
+                            <div>
+
+                                <span class="document-success-label">
+
+                                    <i class="bi bi-check-circle-fill"></i>
+
+                                    Imagen generada
+
+                                </span>
+
+
+                                <h2>
+                                    Versión visual traducida
+                                </h2>
+
+
+                                <p>
+                                    Recreación mediante Inteligencia
+                                    Artificial. Puede presentar variaciones
+                                    respecto a la imagen original.
+                                </p>
+
+                            </div>
+
+
+                            <button
+                                id="btnDownloadGeneratedImage"
+                                type="button"
+                                class="btn btn-outline-primary"
+                            >
+
+                                <i class="bi bi-download"></i>
+
+                                Descargar JPG
+
+                            </button>
+
+                        </div>
+
+
+                        <!-- IMAGEN -->
+
+                        <div class="generated-image-canvas">
+
+                            <img
+                                id="generatedTranslatedImage"
+                                src=""
+                                alt="Imagen traducida generada por Inteligencia Artificial"
+                            >
+
+                        </div>
 
                     </div>
 
@@ -1187,8 +1552,10 @@
 
             <p>
 
-                Desarrollado por Derek Alejandro Vargas Meneses -
-                ITIC - 22200792 - TecNM Pachuca - v.01
+                Desarrollado por
+                Derek Alejandro Vargas Meneses -
+                ITIC - 22200792 -
+                TecNM Pachuca - v.01
 
             </p>
 
@@ -1198,11 +1565,17 @@
 
 
     <!-- =====================================================
-         TOAST
+         TOAST GLOBAL
     ====================================================== -->
 
     <div
-        class="toast-container position-fixed bottom-0 end-0 p-3"
+        class="
+            toast-container
+            position-fixed
+            bottom-0
+            end-0
+            p-3
+        "
     >
 
         <div
@@ -1217,7 +1590,12 @@
 
                 <i
                     id="toastIcon"
-                    class="bi bi-info-circle-fill text-primary me-2"
+                    class="
+                        bi
+                        bi-info-circle-fill
+                        text-primary
+                        me-2
+                    "
                 ></i>
 
 
@@ -1255,14 +1633,18 @@
     </div>
 
 
-    <!-- Bootstrap -->
+    <!-- =====================================================
+         BOOTSTRAP JS
+    ====================================================== -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
     ></script>
 
 
-    <!-- Aplicación -->
+    <!-- =====================================================
+         JAVASCRIPT PRINCIPAL
+    ====================================================== -->
 
     <script
         type="module"

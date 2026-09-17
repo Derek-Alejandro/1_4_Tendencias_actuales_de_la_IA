@@ -39,6 +39,8 @@ from backend.models.translation import (
     ChatRequest,
     DocumentApiResponse,
     DocumentDownloadRequest,
+    ImageAnalysisApiResponse,
+    ImageGenerateRequest,
     RealtimeSessionRequest
 )
 
@@ -83,7 +85,17 @@ from backend.services.document_service import (
 
 
 # ==========================================================
-# LOGS
+# IMÁGENES
+# ==========================================================
+
+from backend.services.image_service import (
+    ImageService,
+    ImageServiceException
+)
+
+
+# ==========================================================
+# LOG
 # ==========================================================
 
 logger = logging.getLogger(
@@ -106,9 +118,7 @@ app = FastAPI(
         "Español ↔ Inglés."
     ),
 
-    version=(
-        "1.1.0"
-    )
+    version="1.2.0"
 
 )
 
@@ -178,6 +188,13 @@ document_service = (
 )
 
 
+image_service = (
+    ImageService(
+        settings
+    )
+)
+
+
 # ==========================================================
 # ROOT
 # ==========================================================
@@ -199,7 +216,7 @@ async def root():
             ),
 
         "version":
-            "1.1.0"
+            "1.2.0"
 
     }
 
@@ -227,7 +244,7 @@ async def health():
             "online",
 
         "version":
-            "1.1.0",
+            "1.2.0",
 
         "openai_configured":
             configured,
@@ -259,7 +276,11 @@ async def health():
                 "ready",
 
             "images":
-                "pending"
+                (
+                    "ready"
+                    if configured
+                    else "configuration_required"
+                )
 
         }
 
@@ -310,13 +331,10 @@ async def chat(
     except ValueError as error:
 
         raise HTTPException(
-
             status_code=400,
-
             detail=str(
                 error
             )
-
         )
 
 
@@ -355,7 +373,7 @@ async def chat(
 
 
 # ==========================================================
-# VOZ REALTIME
+# VOZ
 # ==========================================================
 
 @app.post(
@@ -420,15 +438,15 @@ def create_realtime_session(
             status_code=500,
 
             detail=(
-                "Ocurrió un error interno "
-                "al crear la conversación por voz."
+                "Ocurrió un error interno al "
+                "crear la conversación por voz."
             )
 
         )
 
 
 # ==========================================================
-# TRADUCIR DOCUMENTO
+# DOCUMENTO - TRADUCIR
 # ==========================================================
 
 @app.post(
@@ -458,19 +476,6 @@ async def translate_document(
         file_bytes = (
             await file.read()
         )
-
-
-        if (
-            not file_bytes
-        ):
-
-            raise DocumentServiceException(
-                (
-                    "El archivo seleccionado "
-                    "está vacío."
-                ),
-                400
-            )
 
 
         result = (
@@ -546,8 +551,8 @@ async def translate_document(
             status_code=500,
 
             detail=(
-                "Ocurrió un error interno al "
-                "procesar el documento."
+                "Ocurrió un error interno "
+                "al procesar el documento."
             )
 
         )
@@ -559,7 +564,7 @@ async def translate_document(
 
 
 # ==========================================================
-# DESCARGA - DIAGNÓSTICO
+# DOCUMENTO - DOWNLOAD STATUS
 # ==========================================================
 
 @app.get(
@@ -575,12 +580,6 @@ async def document_download_status():
         "status":
             "ready",
 
-        "message":
-            (
-                "El endpoint de descarga de "
-                "documentos está disponible."
-            ),
-
         "method":
             "POST",
 
@@ -594,7 +593,7 @@ async def document_download_status():
 
 
 # ==========================================================
-# DESCARGAR DOCUMENTO TRADUCIDO
+# DOCUMENTO - DESCARGAR
 # ==========================================================
 
 @app.post(
@@ -605,10 +604,6 @@ def download_translated_document(
 ):
 
     try:
-
-        # ==================================================
-        # CONVERTIR SECCIONES
-        # ==================================================
 
         sections = [
 
@@ -627,10 +622,6 @@ def download_translated_document(
 
         ]
 
-
-        # ==================================================
-        # GENERAR ARCHIVO
-        # ==================================================
 
         (
             download_name,
@@ -660,34 +651,12 @@ def download_translated_document(
         )
 
 
-        # ==================================================
-        # NOMBRE UTF-8
-        # ==================================================
-
         encoded_name = (
             quote(
                 download_name
             )
         )
 
-
-        headers = {
-
-            "Content-Disposition":
-                (
-                    "attachment; "
-                    f"filename*=UTF-8''{encoded_name}"
-                ),
-
-            "Cache-Control":
-                "no-store"
-
-        }
-
-
-        # ==================================================
-        # RESPUESTA BINARIA
-        # ==================================================
 
         return StreamingResponse(
 
@@ -699,9 +668,19 @@ def download_translated_document(
                 mime_type
             ),
 
-            headers=(
-                headers
-            )
+            headers={
+
+                "Content-Disposition":
+                    (
+                        "attachment; "
+                        f"filename*=UTF-8''"
+                        f"{encoded_name}"
+                    ),
+
+                "Cache-Control":
+                    "no-store"
+
+            }
 
         )
 
@@ -738,6 +717,248 @@ def download_translated_document(
             detail=(
                 "Ocurrió un error interno al "
                 "generar el documento traducido."
+            )
+
+        )
+
+
+# ==========================================================
+# IMAGEN - ANALIZAR Y TRADUCIR
+# ==========================================================
+
+@app.post(
+    "/api/image/analyze",
+    response_model=ImageAnalysisApiResponse
+)
+async def analyze_image(
+    file: UploadFile = File(...)
+):
+
+    try:
+
+        file_name = (
+            file.filename
+            or
+            "imagen"
+        )
+
+
+        content_type = (
+            file.content_type
+            or
+            ""
+        )
+
+
+        file_bytes = (
+            await file.read()
+        )
+
+
+        result = (
+            image_service
+            .analyze_image(
+
+                file_name=(
+                    file_name
+                ),
+
+                content_type=(
+                    content_type
+                ),
+
+                file_bytes=(
+                    file_bytes
+                )
+
+            )
+        )
+
+
+        return {
+
+            "success":
+                True,
+
+            "data":
+                result
+
+        }
+
+
+    except ImageServiceException as error:
+
+        raise HTTPException(
+
+            status_code=(
+                error.status_code
+            ),
+
+            detail=(
+                error.user_message
+            )
+
+        )
+
+
+    except Exception:
+
+        logger.exception(
+            "Error inesperado en /api/image/analyze"
+        )
+
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail=(
+                "Ocurrió un error interno al "
+                "analizar la imagen."
+            )
+
+        )
+
+
+    finally:
+
+        await file.close()
+
+
+# ==========================================================
+# IMAGEN - GENERAR VERSIÓN TRADUCIDA
+# ==========================================================
+
+@app.post(
+    "/api/image/generate"
+)
+def generate_translated_image(
+    request: ImageGenerateRequest
+):
+
+    try:
+
+        items = [
+
+            {
+
+                "original_text":
+                    item.original_text,
+
+                "translated_text":
+                    item.translated_text
+
+            }
+
+            for item
+            in request.text_items
+
+        ]
+
+
+        (
+            file_name,
+            mime_type,
+            image_bytes
+        ) = (
+            image_service
+            .generate_translated_image(
+
+                original_file_name=(
+                    request.original_file_name
+                ),
+
+                source_language=(
+                    request.source_language
+                ),
+
+                target_language=(
+                    request.target_language
+                ),
+
+                orientation=(
+                    request.orientation
+                ),
+
+                translated_text=(
+                    request.translated_text
+                ),
+
+                visual_description=(
+                    request.visual_description
+                ),
+
+                text_items=(
+                    items
+                )
+
+            )
+        )
+
+
+        encoded_name = (
+            quote(
+                file_name
+            )
+        )
+
+
+        return StreamingResponse(
+
+            io.BytesIO(
+                image_bytes
+            ),
+
+            media_type=(
+                mime_type
+            ),
+
+            headers={
+
+                "Content-Disposition":
+                    (
+                        "attachment; "
+                        f"filename*=UTF-8''"
+                        f"{encoded_name}"
+                    ),
+
+                "Cache-Control":
+                    "no-store"
+
+            }
+
+        )
+
+
+    except ImageServiceException as error:
+
+        raise HTTPException(
+
+            status_code=(
+                error.status_code
+            ),
+
+            detail=(
+                error.user_message
+            )
+
+        )
+
+
+    except Exception:
+
+        logger.exception(
+            "Error inesperado en /api/image/generate"
+        )
+
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail=(
+                "Ocurrió un error interno al "
+                "generar la imagen traducida."
             )
 
         )

@@ -22,25 +22,13 @@ import {
 } from "./documents.js";
 
 
-// =========================================================
-// CONFIGURACIÓN GENERAL
-// =========================================================
-
-const MAX_IMAGE_SIZE_MB =
-    4;
-
-
-const ALLOWED_IMAGE_TYPES = [
-
-    "image/jpeg",
-    "image/png",
-    "image/webp"
-
-];
+import {
+    ImagesModule
+} from "./images.js";
 
 
 // =========================================================
-// UTILIDAD PARA ELEMENTOS OBLIGATORIOS
+// UTILIDAD - ELEMENTOS OBLIGATORIOS
 // =========================================================
 
 function getRequiredElement(
@@ -73,7 +61,7 @@ function getRequiredElement(
 
 
 // =========================================================
-// ELEMENTOS GENERALES
+// ELEMENTOS DE NAVEGACIÓN
 // =========================================================
 
 const moduleButtons =
@@ -117,7 +105,7 @@ const toastIcon =
 
 
 // =========================================================
-// TOAST - INSTANCIA BOOTSTRAP
+// TOAST - BOOTSTRAP
 // =========================================================
 
 const toast =
@@ -171,6 +159,7 @@ function showToast(
                 .add(
 
                     "bi-check-circle-fill",
+
                     "text-success"
 
                 );
@@ -189,6 +178,7 @@ function showToast(
                 .add(
 
                     "bi-exclamation-circle-fill",
+
                     "text-danger"
 
                 );
@@ -207,6 +197,7 @@ function showToast(
                 .add(
 
                     "bi-exclamation-triangle-fill",
+
                     "text-warning"
 
                 );
@@ -225,6 +216,7 @@ function showToast(
                 .add(
 
                     "bi-info-circle-fill",
+
                     "text-primary"
 
                 );
@@ -248,22 +240,24 @@ function changeModule(
 ) {
 
     // =====================================================
-    // OCULTAR TODOS
+    // OCULTAR MÓDULOS
     // =====================================================
 
     modules.forEach(
         module => {
 
-            module.classList.remove(
-                "active"
-            );
+            module
+                .classList
+                .remove(
+                    "active"
+                );
 
         }
     );
 
 
     // =====================================================
-    // MOSTRAR SELECCIONADO
+    // BUSCAR MÓDULO
     // =====================================================
 
     const selectedModule =
@@ -288,6 +282,10 @@ function changeModule(
 
     }
 
+
+    // =====================================================
+    // MOSTRAR MÓDULO
+    // =====================================================
 
     selectedModule
         .classList
@@ -324,7 +322,7 @@ function changeModule(
 
 
     // =====================================================
-    // CERRAR OFFCANVAS MÓVIL
+    // CERRAR MENÚ MÓVIL
     // =====================================================
 
     const mobileMenu =
@@ -357,7 +355,7 @@ function changeModule(
 
 
     // =====================================================
-    // SUBIR AL INICIO
+    // SCROLL
     // =====================================================
 
     window.scrollTo({
@@ -454,7 +452,7 @@ const chatModule =
 
 
 // =========================================================
-// VOZ EN TIEMPO REAL
+// VOZ
 // =========================================================
 
 const voiceModule =
@@ -578,610 +576,96 @@ const documentsModule =
 
 
 // =========================================================
-// IMÁGENES - ELEMENTOS
+// IMÁGENES
 // =========================================================
 
-const imageDropZone =
-    getRequiredElement(
-        "imageDropZone"
-    );
+const imagesModule =
+    new ImagesModule({
+
+        apiBaseUrl:
+            APP_CONFIG.apiBaseUrl,
 
 
-const imageInput =
-    getRequiredElement(
-        "imageInput"
-    );
-
-
-const btnSelectImage =
-    getRequiredElement(
-        "btnSelectImage"
-    );
-
-
-const imagePreviewContainer =
-    getRequiredElement(
-        "imagePreviewContainer"
-    );
-
-
-const imagePreview =
-    getRequiredElement(
-        "imagePreview"
-    );
-
-
-const btnRemoveImage =
-    getRequiredElement(
-        "btnRemoveImage"
-    );
-
-
-const btnAnalyzeImage =
-    getRequiredElement(
-        "btnAnalyzeImage"
-    );
-
-
-const btnGenerateTranslatedImage =
-    getRequiredElement(
-        "btnGenerateTranslatedImage"
-    );
-
-
-// =========================================================
-// IMÁGENES - ESTADO
-// =========================================================
-
-let selectedImage =
-    null;
-
-
-let imagePreviewUrl =
-    null;
-
-
-// =========================================================
-// IMÁGENES - SELECCIONAR ARCHIVO
-// =========================================================
-
-btnSelectImage.addEventListener(
-    "click",
-    () => {
-
-        imageInput.click();
-
-    }
-);
-
-
-// =========================================================
-// IMÁGENES - INPUT
-// =========================================================
-
-imageInput.addEventListener(
-    "change",
-    () => {
-
-        const file =
-            imageInput
-                .files?.[0];
-
-
-        if (
-            file
-        ) {
-
-            processImage(
-                file
-            );
-
-        }
-
-    }
-);
-
-
-// =========================================================
-// IMÁGENES - ELIMINAR
-// =========================================================
-
-btnRemoveImage.addEventListener(
-    "click",
-    () => {
-
-        removeImage();
-
-    }
-);
-
-
-// =========================================================
-// IMÁGENES - ANALIZAR
-// =========================================================
-
-btnAnalyzeImage.addEventListener(
-    "click",
-    () => {
-
-        if (
-            !selectedImage
-        ) {
-
-            showToast(
-
-                "Imagen no seleccionada",
-
-                (
-                    "Selecciona una imagen " +
-                    "antes de continuar."
-                ),
-
-                "warning"
-
-            );
-
-
-            return;
-
-        }
-
-
-        // =================================================
-        // POR AHORA SOLO PREPARADO
-        // =================================================
-
-        showToast(
-
-            "Imagen preparada",
-
-            (
-                "La imagen está lista para conectarse " +
-                "al módulo de Inteligencia Artificial."
+        dropZone:
+            getRequiredElement(
+                "imageDropZone"
             ),
 
-            "success"
 
-        );
-
-    }
-);
-
-
-// =========================================================
-// IMÁGENES - GENERAR VERSIÓN TRADUCIDA
-// =========================================================
-
-btnGenerateTranslatedImage
-    .addEventListener(
-        "click",
-        () => {
-
-            if (
-                !selectedImage
-            ) {
-
-                showToast(
-
-                    "Imagen no seleccionada",
-
-                    (
-                        "Selecciona una imagen " +
-                        "antes de continuar."
-                    ),
-
-                    "warning"
-
-                );
-
-
-                return;
-
-            }
-
-
-            // =============================================
-            // POR AHORA SOLO PREPARADO
-            // =============================================
-
-            showToast(
-
-                "Generación preparada",
-
-                (
-                    "El módulo de generación visual " +
-                    "traducida se conectará en la " +
-                    "siguiente etapa."
-                ),
-
-                "info"
-
-            );
-
-        }
-    );
-
-
-// =========================================================
-// IMÁGENES - DRAG ENTER / DRAG OVER
-// =========================================================
-
-[
-    "dragenter",
-    "dragover"
-].forEach(
-    eventName => {
-
-        imageDropZone
-            .addEventListener(
-                eventName,
-                event => {
-
-                    event.preventDefault();
-
-                    event.stopPropagation();
-
-
-                    imageDropZone
-                        .classList
-                        .add(
-                            "dragover"
-                        );
-
-                }
-            );
-
-    }
-);
-
-
-// =========================================================
-// IMÁGENES - DRAG LEAVE / DROP
-// =========================================================
-
-[
-    "dragleave",
-    "drop"
-].forEach(
-    eventName => {
-
-        imageDropZone
-            .addEventListener(
-                eventName,
-                event => {
-
-                    event.preventDefault();
-
-                    event.stopPropagation();
-
-
-                    imageDropZone
-                        .classList
-                        .remove(
-                            "dragover"
-                        );
-
-                }
-            );
-
-    }
-);
-
-
-// =========================================================
-// IMÁGENES - DROP
-// =========================================================
-
-imageDropZone.addEventListener(
-    "drop",
-    event => {
-
-        const file =
-            event
-                .dataTransfer
-                ?.files?.[0];
-
-
-        if (
-            file
-        ) {
-
-            processImage(
-                file
-            );
-
-        }
-
-    }
-);
-
-
-// =========================================================
-// IMÁGENES - PROCESAR ARCHIVO
-// =========================================================
-
-function processImage(
-    file
-) {
-
-    // =====================================================
-    // VALIDAR TIPO
-    // =====================================================
-
-    if (
-        !ALLOWED_IMAGE_TYPES
-            .includes(
-                file.type
-            )
-    ) {
-
-        imageInput.value =
-            "";
-
-
-        showToast(
-
-            "Formato no permitido",
-
-            (
-                "Solo se permiten imágenes " +
-                "JPG, JPEG, PNG y WEBP."
+        input:
+            getRequiredElement(
+                "imageInput"
             ),
 
-            "danger"
 
-        );
-
-
-        return;
-
-    }
-
-
-    // =====================================================
-    // VALIDAR TAMAÑO
-    // =====================================================
-
-    if (
-        !validateFileSize(
-            file,
-            MAX_IMAGE_SIZE_MB
-        )
-    ) {
-
-        imageInput.value =
-            "";
-
-
-        showToast(
-
-            "Imagen demasiado grande",
-
-            (
-                "La imagen no debe superar " +
-                `${MAX_IMAGE_SIZE_MB} MB.`
+        selectButton:
+            getRequiredElement(
+                "btnSelectImage"
             ),
 
-            "danger"
 
-        );
-
-
-        return;
-
-    }
+        previewContainer:
+            getRequiredElement(
+                "imagePreviewContainer"
+            ),
 
 
-    // =====================================================
-    // GUARDAR
-    // =====================================================
-
-    selectedImage =
-        file;
+        preview:
+            getRequiredElement(
+                "imagePreview"
+            ),
 
 
-    // =====================================================
-    // LIBERAR URL PREVIA
-    // =====================================================
-
-    releaseImagePreviewUrl();
-
-
-    // =====================================================
-    // CREAR PREVIEW
-    // =====================================================
-
-    imagePreviewUrl =
-        URL.createObjectURL(
-            file
-        );
+        removeButton:
+            getRequiredElement(
+                "btnRemoveImage"
+            ),
 
 
-    imagePreview.src =
-        imagePreviewUrl;
+        analyzeButton:
+            getRequiredElement(
+                "btnAnalyzeImage"
+            ),
 
 
-    imagePreview.alt =
-        (
-            "Vista previa de " +
-            file.name
-        );
+        translationResult:
+            getRequiredElement(
+                "imageTranslationResult"
+            ),
 
 
-    // =====================================================
-    // ACTUALIZAR INTERFAZ
-    // =====================================================
-
-    imageDropZone
-        .classList
-        .add(
-            "d-none"
-        );
+        generateButton:
+            getRequiredElement(
+                "btnGenerateTranslatedImage"
+            ),
 
 
-    imagePreviewContainer
-        .classList
-        .remove(
-            "d-none"
-        );
+        generatedResult:
+            getRequiredElement(
+                "imageGeneratedResult"
+            ),
 
 
-    btnAnalyzeImage.disabled =
-        false;
+        generatedImage:
+            getRequiredElement(
+                "generatedTranslatedImage"
+            ),
 
 
-    btnGenerateTranslatedImage.disabled =
-        false;
+        downloadButton:
+            getRequiredElement(
+                "btnDownloadGeneratedImage"
+            ),
 
 
-    showToast(
+        showToast:
+            showToast
 
-        "Imagen seleccionada",
-
-        (
-            "La imagen cumple con las " +
-            "validaciones iniciales."
-        ),
-
-        "success"
-
-    );
-
-}
+    });
 
 
 // =========================================================
-// IMÁGENES - QUITAR ARCHIVO
-// =========================================================
-
-function removeImage() {
-
-    // =====================================================
-    // BORRAR ESTADO
-    // =====================================================
-
-    selectedImage =
-        null;
-
-
-    imageInput.value =
-        "";
-
-
-    // =====================================================
-    // LIBERAR OBJECT URL
-    // =====================================================
-
-    releaseImagePreviewUrl();
-
-
-    // =====================================================
-    // LIMPIAR IMG
-    // =====================================================
-
-    imagePreview
-        .removeAttribute(
-            "src"
-        );
-
-
-    imagePreview.alt =
-        "Vista previa de la imagen seleccionada";
-
-
-    // =====================================================
-    // INTERFAZ
-    // =====================================================
-
-    imagePreviewContainer
-        .classList
-        .add(
-            "d-none"
-        );
-
-
-    imageDropZone
-        .classList
-        .remove(
-            "d-none"
-        );
-
-
-    btnAnalyzeImage.disabled =
-        true;
-
-
-    btnGenerateTranslatedImage.disabled =
-        true;
-
-
-    showToast(
-
-        "Imagen eliminada",
-
-        (
-            "La imagen seleccionada " +
-            "fue retirada."
-        ),
-
-        "info"
-
-    );
-
-}
-
-
-// =========================================================
-// IMÁGENES - LIBERAR URL TEMPORAL
-// =========================================================
-
-function releaseImagePreviewUrl() {
-
-    if (
-        !imagePreviewUrl
-    ) {
-
-        return;
-
-    }
-
-
-    URL.revokeObjectURL(
-        imagePreviewUrl
-    );
-
-
-    imagePreviewUrl =
-        null;
-
-}
-
-
-// =========================================================
-// UTILIDAD - VALIDAR TAMAÑO
-// =========================================================
-
-function validateFileSize(
-    file,
-    maxSizeMB
-) {
-
-    const maxSizeBytes =
-        maxSizeMB *
-        1024 *
-        1024;
-
-
-    return (
-        file.size <=
-        maxSizeBytes
-    );
-
-}
-
-
-// =========================================================
-// MANEJO GLOBAL DE PROMESAS RECHAZADAS
+// PROMESAS NO CONTROLADAS
 // =========================================================
 
 window.addEventListener(
@@ -1209,17 +693,17 @@ window.addEventListener(
     () => {
 
         // =================================================
-        // VOZ
+        // CERRAR VOZ / WEBRTC
         // =================================================
 
         voiceModule.destroy();
 
 
         // =================================================
-        // IMAGEN
+        // LIBERAR OBJECT URL DE IMÁGENES
         // =================================================
 
-        releaseImagePreviewUrl();
+        imagesModule.destroy();
 
     }
 );
@@ -1268,7 +752,9 @@ console.log(
             ),
 
         images:
-            true
+            Boolean(
+                imagesModule
+            )
 
     }
 
