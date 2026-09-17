@@ -17,26 +17,59 @@ import {
 } from "./voice.js";
 
 
+import {
+    DocumentsModule
+} from "./documents.js";
+
+
 // =========================================================
 // CONFIGURACIÓN GENERAL
 // =========================================================
 
-const MAX_DOCUMENT_SIZE_MB = 10;
-const MAX_IMAGE_SIZE_MB = 10;
-
-
-const ALLOWED_DOCUMENT_EXTENSIONS = [
-    "pdf",
-    "docx",
-    "txt"
-];
+const MAX_IMAGE_SIZE_MB =
+    4;
 
 
 const ALLOWED_IMAGE_TYPES = [
+
     "image/jpeg",
     "image/png",
     "image/webp"
+
 ];
+
+
+// =========================================================
+// UTILIDAD PARA ELEMENTOS OBLIGATORIOS
+// =========================================================
+
+function getRequiredElement(
+    id
+) {
+
+    const element =
+        document.getElementById(
+            id
+        );
+
+
+    if (
+        !element
+    ) {
+
+        throw new Error(
+            (
+                "No se encontró el elemento requerido " +
+                `con id="${id}".`
+            )
+        );
+
+    }
+
+
+    return element;
+
+}
 
 
 // =========================================================
@@ -56,20 +89,54 @@ const modules =
 
 
 // =========================================================
-// TOAST
+// TOAST - ELEMENTOS
 // =========================================================
 
 const toastElement =
-    document.getElementById(
+    getRequiredElement(
         "appToast"
     );
 
 
-const toast =
-    bootstrap.Toast.getOrCreateInstance(
-        toastElement
+const toastTitle =
+    getRequiredElement(
+        "toastTitle"
     );
 
+
+const toastMessage =
+    getRequiredElement(
+        "toastMessage"
+    );
+
+
+const toastIcon =
+    getRequiredElement(
+        "toastIcon"
+    );
+
+
+// =========================================================
+// TOAST - INSTANCIA BOOTSTRAP
+// =========================================================
+
+const toast =
+    bootstrap.Toast
+        .getOrCreateInstance(
+
+            toastElement,
+
+            {
+                delay:
+                    4500
+            }
+
+        );
+
+
+// =========================================================
+// MOSTRAR TOAST
+// =========================================================
 
 function showToast(
     title,
@@ -77,33 +144,15 @@ function showToast(
     type = "info"
 ) {
 
-    const titleElement =
-        document.getElementById(
-            "toastTitle"
-        );
-
-
-    const messageElement =
-        document.getElementById(
-            "toastMessage"
-        );
-
-
-    const icon =
-        document.getElementById(
-            "toastIcon"
-        );
-
-
-    titleElement.textContent =
+    toastTitle.textContent =
         title;
 
 
-    messageElement.textContent =
+    toastMessage.textContent =
         message;
 
 
-    icon.className =
+    toastIcon.className =
         "bi me-2";
 
 
@@ -111,42 +160,76 @@ function showToast(
         type
     ) {
 
+        // =================================================
+        // ÉXITO
+        // =================================================
+
         case "success":
 
-            icon.classList.add(
-                "bi-check-circle-fill",
-                "text-success"
-            );
+            toastIcon
+                .classList
+                .add(
+
+                    "bi-check-circle-fill",
+                    "text-success"
+
+                );
 
             break;
 
+
+        // =================================================
+        // ERROR
+        // =================================================
 
         case "danger":
 
-            icon.classList.add(
-                "bi-exclamation-circle-fill",
-                "text-danger"
-            );
+            toastIcon
+                .classList
+                .add(
+
+                    "bi-exclamation-circle-fill",
+                    "text-danger"
+
+                );
 
             break;
 
+
+        // =================================================
+        // ADVERTENCIA
+        // =================================================
 
         case "warning":
 
-            icon.classList.add(
-                "bi-exclamation-triangle-fill",
-                "text-warning"
-            );
+            toastIcon
+                .classList
+                .add(
+
+                    "bi-exclamation-triangle-fill",
+                    "text-warning"
+
+                );
 
             break;
 
 
+        // =================================================
+        // INFORMACIÓN
+        // =================================================
+
         default:
 
-            icon.classList.add(
-                "bi-info-circle-fill",
-                "text-primary"
-            );
+            toastIcon
+                .classList
+                .add(
+
+                    "bi-info-circle-fill",
+                    "text-primary"
+
+                );
+
+            break;
 
     }
 
@@ -157,12 +240,16 @@ function showToast(
 
 
 // =========================================================
-// NAVEGACIÓN
+// CAMBIAR ENTRE MÓDULOS
 // =========================================================
 
 function changeModule(
     moduleName
 ) {
+
+    // =====================================================
+    // OCULTAR TODOS
+    // =====================================================
 
     modules.forEach(
         module => {
@@ -175,6 +262,10 @@ function changeModule(
     );
 
 
+    // =====================================================
+    // MOSTRAR SELECCIONADO
+    // =====================================================
+
     const selectedModule =
         document.getElementById(
             `module-${moduleName}`
@@ -182,39 +273,109 @@ function changeModule(
 
 
     if (
-        selectedModule
+        !selectedModule
     ) {
 
-        selectedModule.classList.add(
-            "active"
+        console.warn(
+            (
+                "No existe el módulo solicitado: " +
+                moduleName
+            )
         );
+
+
+        return;
 
     }
 
+
+    selectedModule
+        .classList
+        .add(
+            "active"
+        );
+
+
+    // =====================================================
+    // ACTUALIZAR BOTONES
+    // =====================================================
 
     moduleButtons.forEach(
         button => {
 
             const target =
-                button.dataset.moduleTarget;
+                button.dataset
+                    .moduleTarget;
 
 
-            button.classList.toggle(
-                "active",
-                target === moduleName
-            );
+            button
+                .classList
+                .toggle(
+
+                    "active",
+
+                    target ===
+                        moduleName
+
+                );
 
         }
     );
 
 
+    // =====================================================
+    // CERRAR OFFCANVAS MÓVIL
+    // =====================================================
+
+    const mobileMenu =
+        document.getElementById(
+            "mobileMenu"
+        );
+
+
+    if (
+        mobileMenu
+    ) {
+
+        const offcanvas =
+            bootstrap
+                .Offcanvas
+                .getInstance(
+                    mobileMenu
+                );
+
+
+        if (
+            offcanvas
+        ) {
+
+            offcanvas.hide();
+
+        }
+
+    }
+
+
+    // =====================================================
+    // SUBIR AL INICIO
+    // =====================================================
+
     window.scrollTo({
-        top: 0,
-        behavior: "smooth"
+
+        top:
+            0,
+
+        behavior:
+            "smooth"
+
     });
 
 }
 
+
+// =========================================================
+// EVENTOS DE NAVEGACIÓN
+// =========================================================
 
 moduleButtons.forEach(
     button => {
@@ -223,9 +384,20 @@ moduleButtons.forEach(
             "click",
             () => {
 
-                changeModule(
-                    button.dataset.moduleTarget
-                );
+                const moduleName =
+                    button.dataset
+                        .moduleTarget;
+
+
+                if (
+                    moduleName
+                ) {
+
+                    changeModule(
+                        moduleName
+                    );
+
+                }
 
             }
         );
@@ -244,30 +416,36 @@ const chatModule =
         apiBaseUrl:
             APP_CONFIG.apiBaseUrl,
 
+
         chatMessages:
-            document.getElementById(
+            getRequiredElement(
                 "chatMessages"
             ),
 
+
         chatInput:
-            document.getElementById(
+            getRequiredElement(
                 "chatInput"
             ),
 
+
         characterCounter:
-            document.getElementById(
+            getRequiredElement(
                 "characterCounter"
             ),
 
+
         btnSendChat:
-            document.getElementById(
+            getRequiredElement(
                 "btnSendChat"
             ),
 
+
         btnClearChat:
-            document.getElementById(
+            getRequiredElement(
                 "btnClearChat"
             ),
+
 
         showToast:
             showToast
@@ -276,7 +454,7 @@ const chatModule =
 
 
 // =========================================================
-// VOZ REALTIME
+// VOZ EN TIEMPO REAL
 // =========================================================
 
 const voiceModule =
@@ -285,35 +463,42 @@ const voiceModule =
         apiBaseUrl:
             APP_CONFIG.apiBaseUrl,
 
+
         button:
-            document.getElementById(
+            getRequiredElement(
                 "btnVoiceConversation"
             ),
 
+
         microphoneAnimation:
-            document.getElementById(
+            getRequiredElement(
                 "microphoneAnimation"
             ),
 
+
         title:
-            document.getElementById(
+            getRequiredElement(
                 "voiceTitle"
             ),
 
+
         status:
-            document.getElementById(
+            getRequiredElement(
                 "voiceStatus"
             ),
 
+
         connectionBadge:
-            document.getElementById(
+            getRequiredElement(
                 "voiceConnectionBadge"
             ),
 
+
         transcript:
-            document.getElementById(
+            getRequiredElement(
                 "voiceTranscript"
             ),
+
 
         showToast:
             showToast
@@ -325,394 +510,128 @@ const voiceModule =
 // DOCUMENTOS
 // =========================================================
 
-const documentDropZone =
-    document.getElementById(
-        "documentDropZone"
-    );
+const documentsModule =
+    new DocumentsModule({
+
+        apiBaseUrl:
+            APP_CONFIG.apiBaseUrl,
 
 
-const documentInput =
-    document.getElementById(
-        "documentInput"
-    );
-
-
-const btnSelectDocument =
-    document.getElementById(
-        "btnSelectDocument"
-    );
-
-
-const documentSelected =
-    document.getElementById(
-        "documentSelected"
-    );
-
-
-const documentFileName =
-    document.getElementById(
-        "documentFileName"
-    );
-
-
-const documentFileSize =
-    document.getElementById(
-        "documentFileSize"
-    );
-
-
-const btnRemoveDocument =
-    document.getElementById(
-        "btnRemoveDocument"
-    );
-
-
-const btnTranslateDocument =
-    document.getElementById(
-        "btnTranslateDocument"
-    );
-
-
-let selectedDocument =
-    null;
-
-
-// =========================================================
-// SELECCIONAR DOCUMENTO
-// =========================================================
-
-btnSelectDocument.addEventListener(
-    "click",
-    () => {
-
-        documentInput.click();
-
-    }
-);
-
-
-documentInput.addEventListener(
-    "change",
-    () => {
-
-        if (
-            documentInput.files.length
-        ) {
-
-            processDocument(
-                documentInput.files[0]
-            );
-
-        }
-
-    }
-);
-
-
-btnRemoveDocument.addEventListener(
-    "click",
-    () => {
-
-        removeDocument();
-
-    }
-);
-
-
-btnTranslateDocument.addEventListener(
-    "click",
-    () => {
-
-        if (
-            !selectedDocument
-        ) {
-
-            showToast(
-                "Archivo no seleccionado",
-                (
-                    "Selecciona un documento " +
-                    "antes de continuar."
-                ),
-                "warning"
-            );
-
-            return;
-
-        }
-
-
-        showToast(
-            "Documento preparado",
-            (
-                "El documento está listo. " +
-                "La traducción se conectará " +
-                "al backend posteriormente."
+        dropZone:
+            getRequiredElement(
+                "documentDropZone"
             ),
-            "success"
-        );
-
-    }
-);
 
 
-// =========================================================
-// DRAG & DROP DOCUMENTOS
-// =========================================================
-
-[
-    "dragenter",
-    "dragover"
-].forEach(
-    eventName => {
-
-        documentDropZone.addEventListener(
-            eventName,
-            event => {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-
-                documentDropZone
-                    .classList
-                    .add(
-                        "dragover"
-                    );
-
-            }
-        );
-
-    }
-);
-
-
-[
-    "dragleave",
-    "drop"
-].forEach(
-    eventName => {
-
-        documentDropZone.addEventListener(
-            eventName,
-            event => {
-
-                event.preventDefault();
-                event.stopPropagation();
-
-
-                documentDropZone
-                    .classList
-                    .remove(
-                        "dragover"
-                    );
-
-            }
-        );
-
-    }
-);
-
-
-documentDropZone.addEventListener(
-    "drop",
-    event => {
-
-        const files =
-            event.dataTransfer.files;
-
-
-        if (
-            files.length
-        ) {
-
-            processDocument(
-                files[0]
-            );
-
-        }
-
-    }
-);
-
-
-// =========================================================
-// PROCESAR DOCUMENTO
-// =========================================================
-
-function processDocument(
-    file
-) {
-
-    const extension =
-        getFileExtension(
-            file.name
-        );
-
-
-    if (
-        !ALLOWED_DOCUMENT_EXTENSIONS.includes(
-            extension
-        )
-    ) {
-
-        showToast(
-            "Formato no permitido",
-            (
-                "Solo se permiten archivos " +
-                "PDF, DOCX y TXT."
+        input:
+            getRequiredElement(
+                "documentInput"
             ),
-            "danger"
-        );
 
 
-        documentInput.value =
-            "";
-
-        return;
-
-    }
-
-
-    if (
-        !validateFileSize(
-            file,
-            MAX_DOCUMENT_SIZE_MB
-        )
-    ) {
-
-        showToast(
-            "Archivo demasiado grande",
-            (
-                `El documento no debe superar ` +
-                `${MAX_DOCUMENT_SIZE_MB} MB.`
+        selectButton:
+            getRequiredElement(
+                "btnSelectDocument"
             ),
-            "danger"
-        );
 
 
-        documentInput.value =
-            "";
-
-        return;
-
-    }
+        selectedContainer:
+            getRequiredElement(
+                "documentSelected"
+            ),
 
 
-    selectedDocument =
-        file;
+        fileName:
+            getRequiredElement(
+                "documentFileName"
+            ),
 
 
-    documentFileName.textContent =
-        file.name;
+        fileSize:
+            getRequiredElement(
+                "documentFileSize"
+            ),
 
 
-    documentFileSize.textContent =
-        formatFileSize(
-            file.size
-        );
+        removeButton:
+            getRequiredElement(
+                "btnRemoveDocument"
+            ),
 
 
-    documentSelected
-        .classList
-        .remove(
-            "d-none"
-        );
+        translateButton:
+            getRequiredElement(
+                "btnTranslateDocument"
+            ),
 
 
-    btnTranslateDocument.disabled =
-        false;
+        resultContainer:
+            getRequiredElement(
+                "documentResultContent"
+            ),
 
 
-    showToast(
-        "Documento seleccionado",
-        (
-            "El archivo cumple con las " +
-            "validaciones iniciales."
-        ),
-        "success"
-    );
+        showToast:
+            showToast
 
-}
+    });
 
 
 // =========================================================
-// ELIMINAR DOCUMENTO
-// =========================================================
-
-function removeDocument() {
-
-    selectedDocument =
-        null;
-
-
-    documentInput.value =
-        "";
-
-
-    documentSelected
-        .classList
-        .add(
-            "d-none"
-        );
-
-
-    btnTranslateDocument.disabled =
-        true;
-
-}
-
-
-// =========================================================
-// IMÁGENES
+// IMÁGENES - ELEMENTOS
 // =========================================================
 
 const imageDropZone =
-    document.getElementById(
+    getRequiredElement(
         "imageDropZone"
     );
 
 
 const imageInput =
-    document.getElementById(
+    getRequiredElement(
         "imageInput"
     );
 
 
 const btnSelectImage =
-    document.getElementById(
+    getRequiredElement(
         "btnSelectImage"
     );
 
 
 const imagePreviewContainer =
-    document.getElementById(
+    getRequiredElement(
         "imagePreviewContainer"
     );
 
 
 const imagePreview =
-    document.getElementById(
+    getRequiredElement(
         "imagePreview"
     );
 
 
 const btnRemoveImage =
-    document.getElementById(
+    getRequiredElement(
         "btnRemoveImage"
     );
 
 
 const btnAnalyzeImage =
-    document.getElementById(
+    getRequiredElement(
         "btnAnalyzeImage"
     );
 
 
 const btnGenerateTranslatedImage =
-    document.getElementById(
+    getRequiredElement(
         "btnGenerateTranslatedImage"
     );
 
+
+// =========================================================
+// IMÁGENES - ESTADO
+// =========================================================
 
 let selectedImage =
     null;
@@ -723,7 +642,7 @@ let imagePreviewUrl =
 
 
 // =========================================================
-// SELECCIONAR IMAGEN
+// IMÁGENES - SELECCIONAR ARCHIVO
 // =========================================================
 
 btnSelectImage.addEventListener(
@@ -736,16 +655,25 @@ btnSelectImage.addEventListener(
 );
 
 
+// =========================================================
+// IMÁGENES - INPUT
+// =========================================================
+
 imageInput.addEventListener(
     "change",
     () => {
 
+        const file =
+            imageInput
+                .files?.[0];
+
+
         if (
-            imageInput.files.length
+            file
         ) {
 
             processImage(
-                imageInput.files[0]
+                file
             );
 
         }
@@ -753,6 +681,10 @@ imageInput.addEventListener(
     }
 );
 
+
+// =========================================================
+// IMÁGENES - ELIMINAR
+// =========================================================
 
 btnRemoveImage.addEventListener(
     "click",
@@ -764,6 +696,10 @@ btnRemoveImage.addEventListener(
 );
 
 
+// =========================================================
+// IMÁGENES - ANALIZAR
+// =========================================================
+
 btnAnalyzeImage.addEventListener(
     "click",
     () => {
@@ -773,61 +709,39 @@ btnAnalyzeImage.addEventListener(
         ) {
 
             showToast(
+
                 "Imagen no seleccionada",
+
                 (
                     "Selecciona una imagen " +
                     "antes de continuar."
                 ),
+
                 "warning"
+
             );
+
 
             return;
 
         }
 
 
+        // =================================================
+        // POR AHORA SOLO PREPARADO
+        // =================================================
+
         showToast(
+
             "Imagen preparada",
+
             (
-                "La imagen está lista para " +
-                "ser procesada por la IA."
+                "La imagen está lista para conectarse " +
+                "al módulo de Inteligencia Artificial."
             ),
+
             "success"
-        );
 
-    }
-);
-
-
-btnGenerateTranslatedImage.addEventListener(
-    "click",
-    () => {
-
-        if (
-            !selectedImage
-        ) {
-
-            showToast(
-                "Imagen no seleccionada",
-                (
-                    "Selecciona una imagen " +
-                    "antes de continuar."
-                ),
-                "warning"
-            );
-
-            return;
-
-        }
-
-
-        showToast(
-            "Generación preparada",
-            (
-                "Posteriormente generaremos una " +
-                "versión visual traducida."
-            ),
-            "info"
         );
 
     }
@@ -835,7 +749,61 @@ btnGenerateTranslatedImage.addEventListener(
 
 
 // =========================================================
-// DRAG & DROP IMÁGENES
+// IMÁGENES - GENERAR VERSIÓN TRADUCIDA
+// =========================================================
+
+btnGenerateTranslatedImage
+    .addEventListener(
+        "click",
+        () => {
+
+            if (
+                !selectedImage
+            ) {
+
+                showToast(
+
+                    "Imagen no seleccionada",
+
+                    (
+                        "Selecciona una imagen " +
+                        "antes de continuar."
+                    ),
+
+                    "warning"
+
+                );
+
+
+                return;
+
+            }
+
+
+            // =============================================
+            // POR AHORA SOLO PREPARADO
+            // =============================================
+
+            showToast(
+
+                "Generación preparada",
+
+                (
+                    "El módulo de generación visual " +
+                    "traducida se conectará en la " +
+                    "siguiente etapa."
+                ),
+
+                "info"
+
+            );
+
+        }
+    );
+
+
+// =========================================================
+// IMÁGENES - DRAG ENTER / DRAG OVER
 // =========================================================
 
 [
@@ -844,26 +812,32 @@ btnGenerateTranslatedImage.addEventListener(
 ].forEach(
     eventName => {
 
-        imageDropZone.addEventListener(
-            eventName,
-            event => {
+        imageDropZone
+            .addEventListener(
+                eventName,
+                event => {
 
-                event.preventDefault();
-                event.stopPropagation();
+                    event.preventDefault();
+
+                    event.stopPropagation();
 
 
-                imageDropZone
-                    .classList
-                    .add(
-                        "dragover"
-                    );
+                    imageDropZone
+                        .classList
+                        .add(
+                            "dragover"
+                        );
 
-            }
-        );
+                }
+            );
 
     }
 );
 
+
+// =========================================================
+// IMÁGENES - DRAG LEAVE / DROP
+// =========================================================
 
 [
     "dragleave",
@@ -871,41 +845,49 @@ btnGenerateTranslatedImage.addEventListener(
 ].forEach(
     eventName => {
 
-        imageDropZone.addEventListener(
-            eventName,
-            event => {
+        imageDropZone
+            .addEventListener(
+                eventName,
+                event => {
 
-                event.preventDefault();
-                event.stopPropagation();
+                    event.preventDefault();
+
+                    event.stopPropagation();
 
 
-                imageDropZone
-                    .classList
-                    .remove(
-                        "dragover"
-                    );
+                    imageDropZone
+                        .classList
+                        .remove(
+                            "dragover"
+                        );
 
-            }
-        );
+                }
+            );
 
     }
 );
 
 
+// =========================================================
+// IMÁGENES - DROP
+// =========================================================
+
 imageDropZone.addEventListener(
     "drop",
     event => {
 
-        const files =
-            event.dataTransfer.files;
+        const file =
+            event
+                .dataTransfer
+                ?.files?.[0];
 
 
         if (
-            files.length
+            file
         ) {
 
             processImage(
-                files[0]
+                file
             );
 
         }
@@ -915,36 +897,50 @@ imageDropZone.addEventListener(
 
 
 // =========================================================
-// PROCESAR IMAGEN
+// IMÁGENES - PROCESAR ARCHIVO
 // =========================================================
 
 function processImage(
     file
 ) {
 
+    // =====================================================
+    // VALIDAR TIPO
+    // =====================================================
+
     if (
-        !ALLOWED_IMAGE_TYPES.includes(
-            file.type
-        )
+        !ALLOWED_IMAGE_TYPES
+            .includes(
+                file.type
+            )
     ) {
 
+        imageInput.value =
+            "";
+
+
         showToast(
+
             "Formato no permitido",
+
             (
                 "Solo se permiten imágenes " +
                 "JPG, JPEG, PNG y WEBP."
             ),
+
             "danger"
+
         );
 
-
-        imageInput.value =
-            "";
 
         return;
 
     }
 
+
+    // =====================================================
+    // VALIDAR TAMAÑO
+    // =====================================================
 
     if (
         !validateFileSize(
@@ -953,38 +949,47 @@ function processImage(
         )
     ) {
 
-        showToast(
-            "Imagen demasiado grande",
-            (
-                `La imagen no debe superar ` +
-                `${MAX_IMAGE_SIZE_MB} MB.`
-            ),
-            "danger"
-        );
-
-
         imageInput.value =
             "";
+
+
+        showToast(
+
+            "Imagen demasiado grande",
+
+            (
+                "La imagen no debe superar " +
+                `${MAX_IMAGE_SIZE_MB} MB.`
+            ),
+
+            "danger"
+
+        );
+
 
         return;
 
     }
 
 
+    // =====================================================
+    // GUARDAR
+    // =====================================================
+
     selectedImage =
         file;
 
 
-    if (
-        imagePreviewUrl
-    ) {
+    // =====================================================
+    // LIBERAR URL PREVIA
+    // =====================================================
 
-        URL.revokeObjectURL(
-            imagePreviewUrl
-        );
+    releaseImagePreviewUrl();
 
-    }
 
+    // =====================================================
+    // CREAR PREVIEW
+    // =====================================================
 
     imagePreviewUrl =
         URL.createObjectURL(
@@ -998,10 +1003,14 @@ function processImage(
 
     imagePreview.alt =
         (
-            `Vista previa de ` +
-            `${file.name}`
+            "Vista previa de " +
+            file.name
         );
 
+
+    // =====================================================
+    // ACTUALIZAR INTERFAZ
+    // =====================================================
 
     imageDropZone
         .classList
@@ -1026,22 +1035,30 @@ function processImage(
 
 
     showToast(
+
         "Imagen seleccionada",
+
         (
             "La imagen cumple con las " +
             "validaciones iniciales."
         ),
+
         "success"
+
     );
 
 }
 
 
 // =========================================================
-// ELIMINAR IMAGEN
+// IMÁGENES - QUITAR ARCHIVO
 // =========================================================
 
 function removeImage() {
+
+    // =====================================================
+    // BORRAR ESTADO
+    // =====================================================
 
     selectedImage =
         null;
@@ -1051,24 +1068,30 @@ function removeImage() {
         "";
 
 
-    if (
-        imagePreviewUrl
-    ) {
+    // =====================================================
+    // LIBERAR OBJECT URL
+    // =====================================================
 
-        URL.revokeObjectURL(
-            imagePreviewUrl
+    releaseImagePreviewUrl();
+
+
+    // =====================================================
+    // LIMPIAR IMG
+    // =====================================================
+
+    imagePreview
+        .removeAttribute(
+            "src"
         );
 
 
-        imagePreviewUrl =
-            null;
-
-    }
+    imagePreview.alt =
+        "Vista previa de la imagen seleccionada";
 
 
-    imagePreview.src =
-        "";
-
+    // =====================================================
+    // INTERFAZ
+    // =====================================================
 
     imagePreviewContainer
         .classList
@@ -1091,36 +1114,52 @@ function removeImage() {
     btnGenerateTranslatedImage.disabled =
         true;
 
+
+    showToast(
+
+        "Imagen eliminada",
+
+        (
+            "La imagen seleccionada " +
+            "fue retirada."
+        ),
+
+        "info"
+
+    );
+
 }
 
 
 // =========================================================
-// UTILIDADES
+// IMÁGENES - LIBERAR URL TEMPORAL
 // =========================================================
 
-function getFileExtension(
-    fileName
-) {
-
-    const parts =
-        fileName
-            .toLowerCase()
-            .split(".");
-
+function releaseImagePreviewUrl() {
 
     if (
-        parts.length < 2
+        !imagePreviewUrl
     ) {
 
-        return "";
+        return;
 
     }
 
 
-    return parts.pop();
+    URL.revokeObjectURL(
+        imagePreviewUrl
+    );
+
+
+    imagePreviewUrl =
+        null;
 
 }
 
+
+// =========================================================
+// UTILIDAD - VALIDAR TAMAÑO
+// =========================================================
 
 function validateFileSize(
     file,
@@ -1141,76 +1180,46 @@ function validateFileSize(
 }
 
 
-function formatFileSize(
-    bytes
-) {
+// =========================================================
+// MANEJO GLOBAL DE PROMESAS RECHAZADAS
+// =========================================================
 
-    if (
-        bytes === 0
-    ) {
+window.addEventListener(
+    "unhandledrejection",
+    event => {
 
-        return "0 bytes";
+        console.error(
+
+            "Promesa rechazada sin manejar:",
+
+            event.reason
+
+        );
 
     }
-
-
-    const units = [
-        "bytes",
-        "KB",
-        "MB",
-        "GB"
-    ];
-
-
-    const index =
-        Math.floor(
-            Math.log(
-                bytes
-            ) /
-            Math.log(
-                1024
-            )
-        );
-
-
-    const value =
-        bytes /
-        Math.pow(
-            1024,
-            index
-        );
-
-
-    return (
-        `${value.toFixed(2)} ` +
-        `${units[index]}`
-    );
-
-}
+);
 
 
 // =========================================================
-// CIERRE DE PÁGINA
+// LIMPIEZA AL CERRAR / RECARGAR
 // =========================================================
 
 window.addEventListener(
     "beforeunload",
     () => {
 
-        // Cierra WebRTC, micrófono y audio remoto.
+        // =================================================
+        // VOZ
+        // =================================================
+
         voiceModule.destroy();
 
 
-        // Libera la URL temporal de la imagen.
-        if (
-            imagePreviewUrl
-        ) {
+        // =================================================
+        // IMAGEN
+        // =================================================
 
-            URL.revokeObjectURL(
-                imagePreviewUrl
-            );
-
-        }
+        releaseImagePreviewUrl();
 
     }
 );
@@ -1221,11 +1230,46 @@ window.addEventListener(
 // =========================================================
 
 console.log(
-    "Traductor Inteligente Multimodal - Interfaz inicializada."
+    (
+        "Traductor Inteligente Multimodal - " +
+        "Interfaz inicializada."
+    )
 );
 
 
 console.log(
+
     "Backend configurado:",
+
     APP_CONFIG.apiBaseUrl
+
+);
+
+
+console.log(
+
+    "Módulos cargados:",
+
+    {
+
+        chat:
+            Boolean(
+                chatModule
+            ),
+
+        voice:
+            Boolean(
+                voiceModule
+            ),
+
+        documents:
+            Boolean(
+                documentsModule
+            ),
+
+        images:
+            true
+
+    }
+
 );

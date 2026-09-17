@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -11,31 +12,39 @@
 
     <meta
         name="description"
-        content="Traductor inteligente multimodal Español e Inglés con Inteligencia Artificial."
+        content="Traductor inteligente multimodal Español e Inglés con Chat, voz, documentos e imágenes."
     >
 
     <title>
-        Traductor Inteligente Multimodal
+        Traductor Inteligente Multimodal | Español ↔ Inglés
     </title>
 
+
     <!-- Bootstrap -->
+
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
         rel="stylesheet"
     >
 
+
     <!-- Bootstrap Icons -->
+
     <link
-        rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css"
+        rel="stylesheet"
     >
 
-    <!-- CSS personalizado -->
+
+    <!-- CSS -->
+
     <link
         rel="stylesheet"
         href="./assets/css/styles.css"
     >
+
 </head>
+
 
 <body>
 
@@ -43,57 +52,74 @@
          NAVBAR
     ====================================================== -->
 
-    <nav class="navbar navbar-expand-lg app-navbar sticky-top">
+    <nav class="navbar app-navbar sticky-top">
 
         <div class="container-fluid px-3 px-lg-4">
 
             <a
-                class="navbar-brand d-flex align-items-center gap-2"
+                class="navbar-brand d-flex align-items-center gap-3"
                 href="#"
+                aria-label="Traductor Inteligente Multimodal"
             >
 
-                <div class="brand-icon">
-                    <i class="bi bi-translate"></i>
-                </div>
+                <span class="brand-icon">
 
-                <div>
-                    <span class="brand-title">
+                    <i class="bi bi-translate"></i>
+
+                </span>
+
+
+                <span>
+
+                    <span class="brand-title d-block">
+
                         Traductor IA
+
                     </span>
 
-                    <small class="brand-subtitle d-block">
+
+                    <span class="brand-subtitle d-block">
+
                         Español ↔ Inglés
-                    </small>
-                </div>
+
+                    </span>
+
+                </span>
 
             </a>
 
 
-            <button
-                class="navbar-toggler"
-                type="button"
-                data-bs-toggle="offcanvas"
-                data-bs-target="#mobileMenu"
-                aria-controls="mobileMenu"
-            >
-                <i class="bi bi-list"></i>
-            </button>
+            <div class="d-flex align-items-center gap-3">
 
+                <div
+                    class="navbar-status d-none d-md-flex align-items-center gap-2"
+                >
 
-            <div class="d-none d-lg-flex align-items-center gap-2">
+                    <span class="status-dot"></span>
 
-                <span class="status-dot"></span>
-
-                <span class="navbar-status">
                     Plataforma multimodal
-                </span>
+
+                </div>
+
+
+                <button
+                    class="navbar-toggler d-lg-none"
+                    type="button"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#mobileMenu"
+                    aria-controls="mobileMenu"
+                    aria-label="Abrir navegación"
+                >
+
+                    <i class="bi bi-list"></i>
+
+                </button>
 
             </div>
 
         </div>
 
     </nav>
-
 
 
     <!-- =====================================================
@@ -104,19 +130,26 @@
         class="offcanvas offcanvas-start"
         tabindex="-1"
         id="mobileMenu"
+        aria-labelledby="mobileMenuLabel"
     >
 
         <div class="offcanvas-header">
 
-            <h5 class="offcanvas-title">
-                <i class="bi bi-translate me-2"></i>
+            <h2
+                class="offcanvas-title h5 mb-0"
+                id="mobileMenuLabel"
+            >
+
                 Traductor IA
-            </h5>
+
+            </h2>
+
 
             <button
                 type="button"
                 class="btn-close"
                 data-bs-dismiss="offcanvas"
+                aria-label="Cerrar"
             ></button>
 
         </div>
@@ -127,42 +160,62 @@
             <div class="mobile-navigation">
 
                 <button
+                    type="button"
                     class="mobile-nav-button active"
                     data-module-target="chat"
-                    data-bs-dismiss="offcanvas"
                 >
+
                     <i class="bi bi-chat-dots"></i>
-                    Chat
+
+                    <span>
+                        Chat
+                    </span>
+
                 </button>
 
 
                 <button
+                    type="button"
                     class="mobile-nav-button"
                     data-module-target="voice"
-                    data-bs-dismiss="offcanvas"
                 >
+
                     <i class="bi bi-mic"></i>
-                    Voz
+
+                    <span>
+                        Voz
+                    </span>
+
                 </button>
 
 
                 <button
+                    type="button"
                     class="mobile-nav-button"
                     data-module-target="documents"
-                    data-bs-dismiss="offcanvas"
                 >
+
                     <i class="bi bi-file-earmark-text"></i>
-                    Documentos
+
+                    <span>
+                        Documentos
+                    </span>
+
                 </button>
 
 
                 <button
+                    type="button"
                     class="mobile-nav-button"
                     data-module-target="images"
-                    data-bs-dismiss="offcanvas"
                 >
+
                     <i class="bi bi-image"></i>
-                    Imágenes
+
+                    <span>
+                        Imágenes
+                    </span>
+
                 </button>
 
             </div>
@@ -172,9 +225,8 @@
     </div>
 
 
-
     <!-- =====================================================
-         CONTENIDO PRINCIPAL
+         CONTENIDO
     ====================================================== -->
 
     <main class="container-fluid app-container">
@@ -183,79 +235,99 @@
 
 
             <!-- =================================================
-                 SIDEBAR PC
+                 SIDEBAR
             ================================================== -->
 
-            <aside class="col-lg-2 d-none d-lg-block app-sidebar">
+            <aside
+                class="col-lg-2 d-none d-lg-block app-sidebar"
+            >
 
                 <div class="sidebar-content">
 
-                    <p class="sidebar-label">
-                        MODALIDADES
-                    </p>
+                    <div class="sidebar-label">
+
+                        MÓDULOS
+
+                    </div>
 
 
                     <button
+                        type="button"
                         class="sidebar-button active"
                         data-module-target="chat"
                     >
+
                         <i class="bi bi-chat-dots"></i>
 
                         <span>
                             Chat
                         </span>
+
                     </button>
 
 
                     <button
+                        type="button"
                         class="sidebar-button"
                         data-module-target="voice"
                     >
+
                         <i class="bi bi-mic"></i>
 
                         <span>
                             Voz
                         </span>
+
                     </button>
 
 
                     <button
+                        type="button"
                         class="sidebar-button"
                         data-module-target="documents"
                     >
+
                         <i class="bi bi-file-earmark-text"></i>
 
                         <span>
                             Documentos
                         </span>
+
                     </button>
 
 
                     <button
+                        type="button"
                         class="sidebar-button"
                         data-module-target="images"
                     >
+
                         <i class="bi bi-image"></i>
 
                         <span>
                             Imágenes
                         </span>
+
                     </button>
 
 
                     <div class="sidebar-info">
 
-                        <i class="bi bi-shield-check"></i>
+                        <i class="bi bi-shield-lock"></i>
+
 
                         <div>
+
                             <strong>
-                                API protegida
+                                API Key protegida
                             </strong>
 
+
                             <small>
-                                Las credenciales permanecen
-                                únicamente en el backend.
+                                Las credenciales privadas
+                                permanecen únicamente en el backend.
                             </small>
+
                         </div>
 
                     </div>
@@ -265,19 +337,20 @@
             </aside>
 
 
-
             <!-- =================================================
-                 ÁREA DE TRABAJO
+                 WORKSPACE
             ================================================== -->
 
-            <section class="col-12 col-lg-10 workspace">
+            <section
+                class="col-12 col-lg-10 workspace"
+            >
 
 
-                <!-- =============================================
+                <!-- =================================================
                      CHAT
-                ============================================== -->
+                ================================================== -->
 
-                <div
+                <section
                     id="module-chat"
                     class="app-module active"
                 >
@@ -287,19 +360,25 @@
                         <div>
 
                             <span class="module-badge">
+
                                 <i class="bi bi-chat-dots"></i>
-                                Conversación bilingüe
+
+                                Chat bilingüe
+
                             </span>
 
+
                             <h1>
-                                Chat inteligente
+                                Conversación Español ↔ Inglés
                             </h1>
+
 
                             <p>
                                 Escribe en español o inglés.
-                                La IA traducirá tu mensaje,
-                                responderá en el idioma contrario
-                                y mostrará ambas versiones.
+                                El sistema detectará el idioma,
+                                mostrará la traducción y responderá
+                                en el idioma contrario conservando
+                                el contexto de la sesión.
                             </p>
 
                         </div>
@@ -307,15 +386,17 @@
 
                         <button
                             id="btnClearChat"
-                            class="btn btn-outline-secondary"
                             type="button"
+                            class="btn btn-outline-secondary"
                         >
-                            <i class="bi bi-trash3"></i>
+
+                            <i class="bi bi-plus-circle me-1"></i>
+
                             Nueva conversación
+
                         </button>
 
                     </div>
-
 
 
                     <div class="chat-card">
@@ -323,23 +404,29 @@
                         <div
                             id="chatMessages"
                             class="chat-messages"
+                            aria-live="polite"
                         >
 
                             <div class="empty-state">
 
                                 <div class="empty-icon">
+
                                     <i class="bi bi-translate"></i>
+
                                 </div>
+
 
                                 <h2>
                                     Inicia una conversación
                                 </h2>
 
+
                                 <p>
-                                    Puedes escribir en español o
-                                    inglés. El idioma será identificado
-                                    durante el procesamiento.
+                                    Puedes escribir en español
+                                    o inglés. El idioma será
+                                    identificado automáticamente.
                                 </p>
+
 
                                 <div class="language-flow">
 
@@ -347,7 +434,9 @@
                                         🇲🇽 Español
                                     </span>
 
+
                                     <i class="bi bi-arrow-left-right"></i>
+
 
                                     <span>
                                         🇺🇸 English
@@ -360,20 +449,17 @@
                         </div>
 
 
-
                         <div class="chat-composer">
 
                             <div class="composer-info">
 
                                 <span>
-                                    <i class="bi bi-stars"></i>
-                                    Detección automática de idioma
+                                    Enter para enviar ·
+                                    Shift + Enter para nueva línea
                                 </span>
 
-                                <span
-                                    id="characterCounter"
-                                    class="character-counter"
-                                >
+
+                                <span id="characterCounter">
                                     0 / 2000
                                 </span>
 
@@ -385,22 +471,25 @@
                                 <textarea
                                     id="chatInput"
                                     class="form-control"
-                                    maxlength="2000"
                                     rows="1"
-                                    placeholder="Escribe tu mensaje aquí..."
+                                    maxlength="2000"
+                                    placeholder="Escribe un mensaje en español o inglés..."
+                                    aria-label="Mensaje del chat"
                                 ></textarea>
 
 
                                 <button
                                     id="btnSendChat"
-                                    class="btn btn-primary send-button"
                                     type="button"
+                                    class="btn btn-primary send-button"
                                 >
+
                                     <i class="bi bi-send-fill"></i>
 
                                     <span class="d-none d-sm-inline">
                                         Enviar
                                     </span>
+
                                 </button>
 
                             </div>
@@ -409,15 +498,14 @@
 
                     </div>
 
-                </div>
+                </section>
 
 
-
-                <!-- =============================================
+                <!-- =================================================
                      VOZ
-                ============================================== -->
+                ================================================== -->
 
-                <div
+                <section
                     id="module-voice"
                     class="app-module"
                 >
@@ -427,19 +515,23 @@
                         <div>
 
                             <span class="module-badge">
-                                <i class="bi bi-soundwave"></i>
-                                Conversación por voz
+
+                                <i class="bi bi-mic"></i>
+
+                                Voz en tiempo real
+
                             </span>
 
+
                             <h1>
-                                Traductor de voz en tiempo real
+                                Intérprete de voz Español ↔ Inglés
                             </h1>
 
+
                             <p>
-                                Habla directamente desde tu
-                                dispositivo. La IA identificará el
-                                idioma, responderá en el idioma
-                                contrario y utilizará voz.
+                                Habla directamente desde el navegador.
+                                La IA detectará el idioma y reproducirá
+                                en voz alta la traducción al idioma contrario.
                             </p>
 
                         </div>
@@ -447,8 +539,24 @@
                     </div>
 
 
+                    <div class="privacy-notice mb-4">
+
+                        <i class="bi bi-shield-lock-fill"></i>
+
+                        <p>
+                            <strong>Privacidad:</strong>
+                            el audio se procesa durante la sesión
+                            de traducción. Evita compartir información
+                            sensible o confidencial.
+                        </p>
+
+                    </div>
+
 
                     <div class="voice-grid">
+
+
+                        <!-- CONTROL -->
 
                         <div class="voice-control-card">
 
@@ -457,16 +565,19 @@
                                 class="microphone-circle"
                             >
 
-                                <i class="bi bi-mic-fill"></i>
-
                                 <span class="pulse pulse-1"></span>
+
                                 <span class="pulse pulse-2"></span>
+
+                                <i class="bi bi-mic-fill"></i>
 
                             </div>
 
 
                             <h2 id="voiceTitle">
+
                                 Micrófono listo
+
                             </h2>
 
 
@@ -474,18 +585,33 @@
                                 id="voiceStatus"
                                 class="voice-status"
                             >
-                                Presiona el botón para comprobar
-                                el acceso al micrófono.
+
+                                Presiona el botón para iniciar
+                                la traducción de voz.
+
                             </p>
+
+
+                            <span
+                                id="voiceConnectionBadge"
+                                class="badge text-bg-secondary mb-3"
+                            >
+
+                                Desconectado
+
+                            </span>
 
 
                             <button
                                 id="btnVoiceConversation"
-                                class="btn btn-primary btn-lg"
                                 type="button"
+                                class="btn btn-primary"
                             >
+
                                 <i class="bi bi-mic-fill"></i>
+
                                 Iniciar conversación
+
                             </button>
 
 
@@ -495,7 +621,9 @@
                                     🇲🇽 ES
                                 </span>
 
+
                                 <i class="bi bi-arrow-left-right"></i>
+
 
                                 <span>
                                     🇺🇸 EN
@@ -506,21 +634,23 @@
                         </div>
 
 
+                        <!-- TRANSCRIPCIÓN -->
 
                         <div class="transcript-card">
 
                             <div class="transcript-header">
 
                                 <h2>
-                                    <i class="bi bi-chat-left-text"></i>
+
+                                    <i class="bi bi-body-text me-2"></i>
+
                                     Transcripción
+
                                 </h2>
 
-                                <span
-                                    id="voiceConnectionBadge"
-                                    class="badge text-bg-secondary"
-                                >
-                                    Desconectado
+
+                                <span class="badge text-bg-light">
+                                    Tiempo real
                                 </span>
 
                             </div>
@@ -529,16 +659,17 @@
                             <div
                                 id="voiceTranscript"
                                 class="transcript-content"
+                                aria-live="polite"
                             >
 
                                 <div class="transcript-empty">
 
                                     <i class="bi bi-soundwave"></i>
 
+
                                     <p>
-                                        La conversación aparecerá
-                                        aquí cuando se conecte la
-                                        IA en los siguientes pasos.
+                                        Las frases habladas y sus
+                                        traducciones aparecerán aquí.
                                     </p>
 
                                 </div>
@@ -549,15 +680,14 @@
 
                     </div>
 
-                </div>
+                </section>
 
 
-
-                <!-- =============================================
+                <!-- =================================================
                      DOCUMENTOS
-                ============================================== -->
+                ================================================== -->
 
-                <div
+                <section
                     id="module-documents"
                     class="app-module"
                 >
@@ -567,18 +697,23 @@
                         <div>
 
                             <span class="module-badge">
+
                                 <i class="bi bi-file-earmark-text"></i>
-                                Archivos
+
+                                Documentos
+
                             </span>
+
 
                             <h1>
                                 Traducción de documentos
                             </h1>
 
+
                             <p>
-                                Carga documentos PDF, Word o TXT.
-                                La plataforma mostrará el contenido
-                                original y su traducción.
+                                Traduce documentos PDF, Word y TXT
+                                del español al inglés o del inglés
+                                al español utilizando Inteligencia Artificial.
                             </p>
 
                         </div>
@@ -586,8 +721,29 @@
                     </div>
 
 
+                    <div class="privacy-notice mb-4">
+
+                        <i class="bi bi-shield-lock-fill"></i>
+
+
+                        <p>
+
+                            <strong>Privacidad:</strong>
+
+                            el archivo será enviado al backend seguro
+                            para procesar su contenido mediante Inteligencia
+                            Artificial. Evita utilizar documentos que
+                            contengan información personal o sensible.
+
+                        </p>
+
+                    </div>
+
 
                     <div class="upload-layout">
+
+
+                        <!-- CARGA -->
 
                         <div class="upload-card">
 
@@ -595,14 +751,6 @@
                                 id="documentDropZone"
                                 class="drop-zone"
                             >
-
-                                <input
-                                    id="documentInput"
-                                    type="file"
-                                    hidden
-                                    accept=".pdf,.docx,.txt"
-                                >
-
 
                                 <div class="drop-icon">
 
@@ -624,21 +772,33 @@
 
                                 <button
                                     id="btnSelectDocument"
-                                    class="btn btn-outline-primary"
                                     type="button"
+                                    class="btn btn-outline-primary"
                                 >
-                                    <i class="bi bi-folder2-open"></i>
-                                    Elegir archivo
+
+                                    <i class="bi bi-folder2-open me-1"></i>
+
+                                    Seleccionar archivo
+
                                 </button>
 
 
+                                <input
+                                    id="documentInput"
+                                    type="file"
+                                    accept=".pdf,.docx,.txt"
+                                    hidden
+                                >
+
+
                                 <small>
-                                    PDF, DOCX o TXT · Máximo 10 MB
+                                    PDF, DOCX o TXT · Máximo 4 MB
                                 </small>
 
                             </div>
 
 
+                            <!-- ARCHIVO SELECCIONADO -->
 
                             <div
                                 id="documentSelected"
@@ -647,7 +807,7 @@
 
                                 <div class="selected-file-icon">
 
-                                    <i class="bi bi-file-earmark-text"></i>
+                                    <i class="bi bi-file-earmark-check"></i>
 
                                 </div>
 
@@ -655,11 +815,12 @@
                                 <div class="selected-file-info">
 
                                     <strong id="documentFileName">
-                                        documento.pdf
+                                        Documento
                                     </strong>
 
+
                                     <span id="documentFileSize">
-                                        0 MB
+                                        0 KB
                                     </span>
 
                                 </div>
@@ -667,11 +828,13 @@
 
                                 <button
                                     id="btnRemoveDocument"
-                                    class="btn btn-sm btn-light"
                                     type="button"
+                                    class="btn btn-sm btn-outline-danger"
                                     aria-label="Eliminar documento"
                                 >
-                                    <i class="bi bi-x-lg"></i>
+
+                                    <i class="bi bi-trash"></i>
+
                                 </button>
 
                             </div>
@@ -679,44 +842,96 @@
 
                             <button
                                 id="btnTranslateDocument"
-                                class="btn btn-primary w-100 mt-3"
                                 type="button"
+                                class="btn btn-primary w-100 mt-3"
                                 disabled
                             >
+
                                 <i class="bi bi-translate"></i>
+
                                 Traducir documento
+
                             </button>
+
+
+                            <div class="document-formats mt-3">
+
+                                <span>
+
+                                    <i class="bi bi-filetype-pdf"></i>
+
+                                    PDF
+
+                                </span>
+
+
+                                <span>
+
+                                    <i class="bi bi-filetype-docx"></i>
+
+                                    DOCX
+
+                                </span>
+
+
+                                <span>
+
+                                    <i class="bi bi-filetype-txt"></i>
+
+                                    TXT
+
+                                </span>
+
+                            </div>
 
                         </div>
 
 
+                        <!-- RESULTADO -->
 
-                        <div class="result-card">
+                        <div class="result-card document-result-card">
 
                             <div class="result-card-header">
 
                                 <h2>
+
+                                    <i class="bi bi-translate me-2"></i>
+
                                     Resultado
+
                                 </h2>
 
+
                                 <span class="badge text-bg-light">
-                                    ES ↔ EN
+
+                                    Español ↔ English
+
                                 </span>
 
                             </div>
 
 
                             <div
-                                id="documentResult"
-                                class="result-empty"
+                                id="documentResultContent"
+                                class="document-result-content"
                             >
 
-                                <i class="bi bi-file-text"></i>
+                                <div class="result-empty">
 
-                                <p>
-                                    La traducción del documento
-                                    aparecerá aquí.
-                                </p>
+                                    <i class="bi bi-file-earmark-text"></i>
+
+
+                                    <h3>
+                                        Traducción del documento
+                                    </h3>
+
+
+                                    <p>
+                                        Selecciona un archivo y presiona
+                                        <strong>Traducir documento</strong>.
+                                    </p>
+
+                                </div>
 
                             </div>
 
@@ -724,29 +939,14 @@
 
                     </div>
 
-
-                    <div class="privacy-notice mt-3">
-
-                        <i class="bi bi-info-circle-fill"></i>
-
-                        <p>
-                            Los documentos seleccionados podrán ser
-                            enviados a servicios de Inteligencia Artificial
-                            para su procesamiento. Evita cargar información
-                            personal, confidencial o sensible.
-                        </p>
-
-                    </div>
-
-                </div>
+                </section>
 
 
-
-                <!-- =============================================
+                <!-- =================================================
                      IMÁGENES
-                ============================================== -->
+                ================================================== -->
 
-                <div
+                <section
                     id="module-images"
                     class="app-module"
                 >
@@ -756,19 +956,24 @@
                         <div>
 
                             <span class="module-badge">
+
                                 <i class="bi bi-image"></i>
-                                Visión artificial
+
+                                Imágenes
+
                             </span>
 
+
                             <h1>
-                                Traducción visual de imágenes
+                                Traducción de imágenes
                             </h1>
 
+
                             <p>
-                                Carga una imagen con texto. La IA
-                                interpretará su contenido y posteriormente
-                                podrá generar una versión visual similar
-                                traducida al otro idioma.
+                                Carga una imagen con texto.
+                                En la siguiente etapa la IA interpretará
+                                el contenido, lo traducirá y generará
+                                una versión visual traducida.
                             </p>
 
                         </div>
@@ -776,17 +981,38 @@
                     </div>
 
 
+                    <div class="privacy-notice mb-4">
+
+                        <i class="bi bi-shield-lock-fill"></i>
+
+
+                        <p>
+
+                            <strong>Privacidad:</strong>
+
+                            evita subir imágenes con datos sensibles.
+                            Los formatos admitidos son JPG, PNG y WEBP.
+
+                        </p>
+
+                    </div>
+
 
                     <div class="image-workspace">
 
-                        <!-- Original -->
+
+                        <!-- ORIGINAL -->
 
                         <div class="image-panel">
 
                             <div class="image-panel-header">
 
                                 <h2>
+
+                                    <i class="bi bi-image me-2"></i>
+
                                     Imagen original
+
                                 </h2>
 
                             </div>
@@ -797,17 +1023,9 @@
                                 class="drop-zone image-drop-zone"
                             >
 
-                                <input
-                                    id="imageInput"
-                                    type="file"
-                                    hidden
-                                    accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
-                                >
-
-
                                 <div class="drop-icon">
 
-                                    <i class="bi bi-image"></i>
+                                    <i class="bi bi-card-image"></i>
 
                                 </div>
 
@@ -818,22 +1036,34 @@
 
 
                                 <p>
-                                    JPG, JPEG, PNG o WEBP
+                                    Arrastra una imagen aquí o
+                                    selecciónala desde tu dispositivo.
                                 </p>
 
 
                                 <button
                                     id="btnSelectImage"
-                                    class="btn btn-outline-primary"
                                     type="button"
+                                    class="btn btn-outline-primary"
                                 >
-                                    <i class="bi bi-folder2-open"></i>
-                                    Elegir imagen
+
+                                    <i class="bi bi-folder2-open me-1"></i>
+
+                                    Seleccionar imagen
+
                                 </button>
 
 
+                                <input
+                                    id="imageInput"
+                                    type="file"
+                                    accept="image/jpeg,image/png,image/webp"
+                                    hidden
+                                >
+
+
                                 <small>
-                                    Máximo 10 MB
+                                    JPG, PNG o WEBP · Máximo 4 MB
                                 </small>
 
                             </div>
@@ -847,16 +1077,19 @@
                                 <img
                                     id="imagePreview"
                                     src=""
-                                    alt="Vista previa de imagen"
+                                    alt="Vista previa de la imagen seleccionada"
                                 >
 
 
                                 <button
                                     id="btnRemoveImage"
-                                    class="btn btn-light image-remove-button"
                                     type="button"
+                                    class="btn btn-light image-remove-button"
+                                    aria-label="Eliminar imagen"
                                 >
+
                                     <i class="bi bi-x-lg"></i>
+
                                 </button>
 
                             </div>
@@ -864,30 +1097,37 @@
                         </div>
 
 
-
-                        <!-- Resultado -->
+                        <!-- RESULTADO -->
 
                         <div class="image-panel">
 
                             <div class="image-panel-header">
 
                                 <h2>
-                                    Versión traducida
+
+                                    <i class="bi bi-stars me-2"></i>
+
+                                    Resultado traducido
+
                                 </h2>
 
                             </div>
 
 
-                            <div
-                                id="generatedImageContainer"
-                                class="generated-image-placeholder"
-                            >
+                            <div class="generated-image-placeholder">
 
-                                <i class="bi bi-stars"></i>
+                                <i class="bi bi-image-alt"></i>
+
+
+                                <h3>
+                                    Imagen traducida
+                                </h3>
+
 
                                 <p>
-                                    La recreación traducida de la
-                                    imagen aparecerá aquí.
+                                    El resultado visual traducido aparecerá
+                                    aquí cuando conectemos el módulo
+                                    de imágenes.
                                 </p>
 
                             </div>
@@ -897,137 +1137,44 @@
                     </div>
 
 
-
                     <div class="image-actions">
 
                         <button
                             id="btnAnalyzeImage"
-                            class="btn btn-outline-primary"
                             type="button"
+                            class="btn btn-outline-primary"
                             disabled
                         >
+
                             <i class="bi bi-search"></i>
+
                             Analizar y traducir texto
+
                         </button>
 
 
                         <button
                             id="btnGenerateTranslatedImage"
-                            class="btn btn-primary"
                             type="button"
+                            class="btn btn-primary"
                             disabled
                         >
+
                             <i class="bi bi-stars"></i>
+
                             Generar versión traducida
+
                         </button>
 
                     </div>
 
-
-
-                    <div
-                        id="imageTextResult"
-                        class="image-text-result"
-                    >
-
-                        <div>
-
-                            <span>
-                                Texto detectado
-                            </span>
-
-                            <p>
-                                Pendiente de análisis.
-                            </p>
-
-                        </div>
-
-
-                        <div>
-
-                            <span>
-                                Traducción
-                            </span>
-
-                            <p>
-                                Pendiente de análisis.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <div class="privacy-notice mt-3">
-
-                        <i class="bi bi-info-circle-fill"></i>
-
-                        <p>
-                            La imagen seleccionada podrá enviarse a
-                            servicios de Inteligencia Artificial para
-                            interpretación y generación.
-                        </p>
-
-                    </div>
-
-                </div>
+                </section>
 
             </section>
 
         </div>
 
     </main>
-
-
-
-    <!-- =====================================================
-         TOAST
-    ====================================================== -->
-
-    <div class="toast-container position-fixed bottom-0 end-0 p-3">
-
-        <div
-            id="appToast"
-            class="toast"
-            role="alert"
-        >
-
-            <div class="toast-header">
-
-                <i
-                    id="toastIcon"
-                    class="bi bi-info-circle-fill me-2"
-                ></i>
-
-                <strong
-                    id="toastTitle"
-                    class="me-auto"
-                >
-                    Información
-                </strong>
-
-
-                <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="toast"
-                ></button>
-
-            </div>
-
-
-            <div
-                id="toastMessage"
-                class="toast-body"
-            >
-                Mensaje
-            </div>
-
-        </div>
-
-    </div>
-
 
 
     <!-- =====================================================
@@ -1039,11 +1186,10 @@
         <div class="container-fluid">
 
             <p>
-                Desarrollado por
-                <strong>
-                    Derek Alejandro Vargas Meneses
-                </strong>
-                - ITIC - 22200792 - TecNM Pachuca - v.01
+
+                Desarrollado por Derek Alejandro Vargas Meneses -
+                ITIC - 22200792 - TecNM Pachuca - v.01
+
             </p>
 
         </div>
@@ -1051,8 +1197,65 @@
     </footer>
 
 
+    <!-- =====================================================
+         TOAST
+    ====================================================== -->
 
-    <!-- Bootstrap JS -->
+    <div
+        class="toast-container position-fixed bottom-0 end-0 p-3"
+    >
+
+        <div
+            id="appToast"
+            class="toast"
+            role="alert"
+            aria-live="assertive"
+            aria-atomic="true"
+        >
+
+            <div class="toast-header">
+
+                <i
+                    id="toastIcon"
+                    class="bi bi-info-circle-fill text-primary me-2"
+                ></i>
+
+
+                <strong
+                    id="toastTitle"
+                    class="me-auto"
+                >
+
+                    Información
+
+                </strong>
+
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="toast"
+                    aria-label="Cerrar"
+                ></button>
+
+            </div>
+
+
+            <div
+                id="toastMessage"
+                class="toast-body"
+            >
+
+                Mensaje
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Bootstrap -->
 
     <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
