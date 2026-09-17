@@ -1,9 +1,12 @@
 import os
-from dataclasses import dataclass
+
+from dataclasses import (
+    dataclass
+)
 
 
 # ==========================================================
-# UTILIDADES
+# STRING
 # ==========================================================
 
 def get_env_string(
@@ -15,16 +18,32 @@ def get_env_string(
         name
     )
 
-    if value is None:
+
+    if (
+        value is None
+    ):
+
         return default
 
-    value = value.strip()
 
-    if not value:
+    value = (
+        value.strip()
+    )
+
+
+    if (
+        not value
+    ):
+
         return default
+
 
     return value
 
+
+# ==========================================================
+# INTEGER
+# ==========================================================
 
 def get_env_int(
     name: str,
@@ -35,13 +54,25 @@ def get_env_int(
         name
     )
 
-    if value is None:
+
+    if (
+        value is None
+    ):
+
         return default
 
-    value = value.strip()
 
-    if not value:
+    value = (
+        value.strip()
+    )
+
+
+    if (
+        not value
+    ):
+
         return default
+
 
     try:
 
@@ -49,54 +80,69 @@ def get_env_int(
             value
         )
 
+
     except ValueError:
 
         return default
 
 
 # ==========================================================
-# CONFIGURACIÓN
+# SETTINGS
 # ==========================================================
 
-@dataclass(frozen=True)
+@dataclass(
+    frozen=True
+)
 class Settings:
 
     # ======================================================
     # OPENAI
     # ======================================================
 
-    openai_api_key: str = get_env_string(
-        "OPENAI_API_KEY"
+    openai_api_key: str = (
+        get_env_string(
+            "OPENAI_API_KEY"
+        )
     )
 
 
-    text_model: str = get_env_string(
-        "OPENAI_TEXT_MODEL",
-        "gpt-5.6-luna"
+    text_model: str = (
+        get_env_string(
+            "OPENAI_TEXT_MODEL",
+            "gpt-5.6-luna"
+        )
     )
 
 
-    realtime_model: str = get_env_string(
-        "OPENAI_REALTIME_MODEL",
-        "gpt-realtime-2.1-mini"
+    realtime_model: str = (
+        get_env_string(
+            "OPENAI_REALTIME_MODEL",
+            "gpt-realtime-2.1-mini"
+        )
     )
 
 
-    transcription_model: str = get_env_string(
-        "OPENAI_TRANSCRIPTION_MODEL",
-        "gpt-4o-mini-transcribe"
+    transcription_model: str = (
+        get_env_string(
+            "OPENAI_TRANSCRIPTION_MODEL",
+            "gpt-4o-mini-transcribe"
+        )
     )
 
 
-    realtime_voice: str = get_env_string(
-        "OPENAI_REALTIME_VOICE",
-        "marin"
+    realtime_voice: str = (
+        get_env_string(
+            "OPENAI_REALTIME_VOICE",
+            "marin"
+        )
     )
 
 
-    image_model: str = get_env_string(
-        "OPENAI_IMAGE_MODEL",
-        "gpt-image-2.5-flare"
+    image_model: str = (
+        get_env_string(
+            "OPENAI_IMAGE_MODEL",
+            "gpt-image-2.5-flare"
+        )
     )
 
 
@@ -104,27 +150,35 @@ class Settings:
     # LÍMITES
     # ======================================================
 
-    max_image_size_mb: int = get_env_int(
-        "MAX_IMAGE_SIZE_MB",
-        10
+    max_image_size_mb: int = (
+        get_env_int(
+            "MAX_IMAGE_SIZE_MB",
+            4
+        )
     )
 
 
-    max_document_size_mb: int = get_env_int(
-        "MAX_DOCUMENT_SIZE_MB",
-        10
+    max_document_size_mb: int = (
+        get_env_int(
+            "MAX_DOCUMENT_SIZE_MB",
+            4
+        )
     )
 
 
-    max_audio_size_mb: int = get_env_int(
-        "MAX_AUDIO_SIZE_MB",
-        20
+    max_audio_size_mb: int = (
+        get_env_int(
+            "MAX_AUDIO_SIZE_MB",
+            4
+        )
     )
 
 
-    max_chat_characters: int = get_env_int(
-        "MAX_CHAT_CHARACTERS",
-        2000
+    max_chat_characters: int = (
+        get_env_int(
+            "MAX_CHAT_CHARACTERS",
+            2000
+        )
     )
 
 
@@ -137,19 +191,30 @@ class Settings:
         self
     ) -> list[str]:
 
-        origins = get_env_string(
-            "ALLOWED_ORIGINS",
-            (
-                "http://127.0.0.1:5500,"
-                "http://localhost:5500,"
-                "https://derek-alejandro.github.io"
+        origins = (
+            get_env_string(
+
+                "ALLOWED_ORIGINS",
+
+                (
+                    "http://127.0.0.1:5500,"
+                    "http://localhost:5500,"
+                    "https://derek-alejandro.github.io"
+                )
+
             )
         )
 
+
         return [
+
             origin.strip()
-            for origin in origins.split(",")
+
+            for origin
+            in origins.split(",")
+
             if origin.strip()
+
         ]
 
 
@@ -168,7 +233,7 @@ class Settings:
 
 
 # ==========================================================
-# INSTANCIA GLOBAL
+# INSTANCIA
 # ==========================================================
 
 settings = Settings()

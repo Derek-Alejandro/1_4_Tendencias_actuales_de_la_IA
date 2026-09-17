@@ -2,7 +2,9 @@ import logging
 
 from fastapi import (
     FastAPI,
-    HTTPException
+    HTTPException,
+    UploadFile,
+    File
 )
 
 from fastapi.middleware.cors import (
@@ -10,17 +12,30 @@ from fastapi.middleware.cors import (
 )
 
 
+# ==========================================================
+# CONFIGURACIÓN
+# ==========================================================
+
 from backend.core.settings import (
     settings
 )
 
 
+# ==========================================================
+# MODELOS
+# ==========================================================
+
 from backend.models.translation import (
     ChatRequest,
     ChatApiResponse,
-    RealtimeSessionRequest
+    RealtimeSessionRequest,
+    DocumentApiResponse
 )
 
+
+# ==========================================================
+# SERVICIO OPENAI
+# ==========================================================
 
 from backend.services.openai_service import (
     OpenAIService,
@@ -28,14 +43,32 @@ from backend.services.openai_service import (
 )
 
 
+# ==========================================================
+# CHAT
+# ==========================================================
+
 from backend.services.chat_service import (
     ChatService
 )
 
 
+# ==========================================================
+# VOZ REALTIME
+# ==========================================================
+
 from backend.services.realtime_service import (
     RealtimeService,
     RealtimeServiceException
+)
+
+
+# ==========================================================
+# DOCUMENTOS
+# ==========================================================
+
+from backend.services.document_service import (
+    DocumentService,
+    DocumentServiceException
 )
 
 
@@ -91,6 +124,7 @@ app.add_middleware(
         "Content-Type",
         "Authorization"
     ]
+
 )
 
 
@@ -113,8 +147,14 @@ realtime_service = RealtimeService(
 )
 
 
+document_service = DocumentService(
+    settings,
+    openai_service
+)
+
+
 # ==========================================================
-# API
+# ROOT
 # ==========================================================
 
 @app.get(
@@ -135,6 +175,7 @@ async def root():
 
         "version":
             "1.0.0"
+
     }
 
 
@@ -180,11 +221,17 @@ async def health():
                 ),
 
             "documents":
-                "pending",
+                (
+                    "ready"
+                    if configured
+                    else "configuration_required"
+                ),
 
             "images":
                 "pending"
+
         }
+
     }
 
 
@@ -203,7 +250,8 @@ async def chat(
     try:
 
         result = (
-            chat_service.process_message(
+            chat_service
+            .process_message(
 
                 message=(
                     request.message
@@ -212,6 +260,7 @@ async def chat(
                 history=(
                     request.history
                 )
+
             )
         )
 
@@ -223,8 +272,13 @@ async def chat(
 
             "data":
                 result
+
         }
 
+
+    # ======================================================
+    # ENTRADA INVÁLIDA
+    # ======================================================
 
     except ValueError as error:
 
@@ -235,8 +289,13 @@ async def chat(
             detail=str(
                 error
             )
+
         )
 
+
+    # ======================================================
+    # ERROR OPENAI
+    # ======================================================
 
     except OpenAIServiceException as error:
 
@@ -249,8 +308,13 @@ async def chat(
             detail=(
                 error.user_message
             )
+
         )
 
+
+    # ======================================================
+    # ERROR GENERAL
+    # ======================================================
 
     except Exception:
 
@@ -267,6 +331,7 @@ async def chat(
                 "Ocurrió un error interno "
                 "al procesar el mensaje."
             )
+
         )
 
 
@@ -300,9 +365,15 @@ def create_realtime_session(
 
                 "sdp":
                     answer_sdp
+
             }
+
         }
 
+
+    # ======================================================
+    # ERROR REALTIME
+    # ======================================================
 
     except RealtimeServiceException as error:
 
@@ -315,8 +386,13 @@ def create_realtime_session(
             detail=(
                 error.user_message
             )
+
         )
 
+
+    # ======================================================
+    # ERROR GENERAL
+    # ======================================================
 
     except Exception:
 
@@ -336,4 +412,174 @@ def create_realtime_session(
                 "Ocurrió un error interno "
                 "al crear la conversación por voz."
             )
+
         )
+
+
+# ==========================================================
+# DOCUMENTOS
+# ==========================================================
+
+@app.post(
+    "/api/document",
+    response_model=DocumentApiResponse
+)
+async def translate_document(
+    file: UploadFile = File(...)
+):
+
+    try:
+
+        # ==================================================
+        # NOMBRE DEL ARCHIVO
+        # ==================================================
+
+        file_name = (
+            file.filename
+            or "documento"
+        )
+
+
+        # ==================================================
+        # CONTENT TYPE
+        # ==================================================
+
+        content_type = (
+            file.content_type
+            or ""
+        )
+
+
+        # ==================================================
+        # LEER ARCHIVO
+        # ==================================================
+
+        file_bytes = (
+            await file.read()
+        )
+
+
+        # ==================================================
+        # VALIDAR ARCHIVO VACÍO
+        # ==================================================
+
+        if (
+            not file_bytes
+        ):
+
+            raise DocumentServiceException(
+                (
+                    "El archivo seleccionado "
+                    "está vacío."
+                ),
+                400
+            )
+
+
+        # ==================================================
+        # PROCESAR Y TRADUCIR
+        # ==================================================
+
+        result = (
+            document_service
+            .translate_document(
+
+                file_name=(
+                    file_name
+                ),
+
+                content_type=(
+                    content_type
+                ),
+
+                file_bytes=(
+                    file_bytes
+                )
+
+            )
+        )
+
+
+        # ==================================================
+        # RESPUESTA
+        # ==================================================
+
+        return {
+
+            "success":
+                True,
+
+            "data":
+                result
+
+        }
+
+
+    # ======================================================
+    # ERROR DE DOCUMENTO
+    # ======================================================
+
+    except DocumentServiceException as error:
+
+        raise HTTPException(
+
+            status_code=(
+                error.status_code
+            ),
+
+            detail=(
+                error.user_message
+            )
+
+        )
+
+
+    # ======================================================
+    # ERROR OPENAI
+    # ======================================================
+
+    except OpenAIServiceException as error:
+
+        raise HTTPException(
+
+            status_code=(
+                error.status_code
+            ),
+
+            detail=(
+                error.user_message
+            )
+
+        )
+
+
+    # ======================================================
+    # ERROR GENERAL
+    # ======================================================
+
+    except Exception:
+
+        logger.exception(
+            "Error inesperado en /api/document"
+        )
+
+
+        raise HTTPException(
+
+            status_code=500,
+
+            detail=(
+                "Ocurrió un error interno "
+                "al procesar el documento."
+            )
+
+        )
+
+
+    # ======================================================
+    # CERRAR ARCHIVO
+    # ======================================================
+
+    finally:
+
+        await file.close()

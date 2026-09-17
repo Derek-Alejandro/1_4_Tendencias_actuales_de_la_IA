@@ -7,7 +7,7 @@ from pydantic import (
 
 
 # ==========================================================
-# HISTORIAL DEL CHAT
+# CHAT - HISTORIAL
 # ==========================================================
 
 class ChatHistoryItem(
@@ -33,7 +33,7 @@ class ChatHistoryItem(
 
 
 # ==========================================================
-# PETICIÓN CHAT
+# CHAT - REQUEST
 # ==========================================================
 
 class ChatRequest(
@@ -54,7 +54,7 @@ class ChatRequest(
 
 
 # ==========================================================
-# RESULTADO CHAT
+# CHAT - RESULTADO
 # ==========================================================
 
 class ChatResult(
@@ -81,7 +81,7 @@ class ChatResult(
 
 
 # ==========================================================
-# RESPUESTA CHAT
+# CHAT - API RESPONSE
 # ==========================================================
 
 class ChatApiResponse(
@@ -94,7 +94,7 @@ class ChatApiResponse(
 
 
 # ==========================================================
-# PETICIÓN REALTIME WEBRTC
+# REALTIME
 # ==========================================================
 
 class RealtimeSessionRequest(
@@ -106,3 +106,68 @@ class RealtimeSessionRequest(
         min_length=20,
         max_length=100000
     )
+
+
+# ==========================================================
+# DOCUMENTOS - SECCIÓN
+# ==========================================================
+
+class DocumentSectionResult(
+    BaseModel
+):
+
+    id: int
+
+    title: str
+
+    translated_title: str
+
+    original_text: str
+
+    translated_text: str
+
+
+# ==========================================================
+# DOCUMENTOS - RESULTADO
+# ==========================================================
+
+class DocumentResult(
+    BaseModel
+):
+
+    file_name: str
+
+    file_type: str
+
+    file_size: int
+
+    source_language: Literal[
+        "es",
+        "en"
+    ]
+
+    target_language: Literal[
+        "es",
+        "en"
+    ]
+
+    character_count: int
+
+    section_count: int
+
+    sections: list[
+        DocumentSectionResult
+    ]
+
+
+# ==========================================================
+# DOCUMENTOS - API RESPONSE
+# ==========================================================
+
+class DocumentApiResponse(
+    BaseModel
+):
+
+    success: bool
+
+    data: DocumentResult
