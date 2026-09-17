@@ -67,9 +67,7 @@ class RealtimeService:
         )
 
 
-        self.client = (
-            None
-        )
+        self.client = None
 
 
         if (
@@ -77,11 +75,9 @@ class RealtimeService:
         ):
 
             self.client = OpenAI(
-
                 api_key=(
                     self.settings.openai_api_key
                 )
-
             )
 
 
@@ -169,22 +165,12 @@ RULES:
 
 
     # ======================================================
-    # CONFIGURACIÓN MÍNIMA
+    # CONFIGURACIÓN DE LA SESIÓN
     # ======================================================
 
     def _session_config(
         self
     ) -> dict:
-
-        """
-        Usamos únicamente campos esenciales.
-
-        Primero queremos confirmar que la conexión
-        WebRTC funciona correctamente.
-
-        Posteriormente agregaremos configuración
-        avanzada de transcripción, VAD y voz.
-        """
 
         return {
 
@@ -205,7 +191,7 @@ RULES:
 
 
     # ======================================================
-    # OBTENER INFORMACIÓN DE ERROR
+    # EXTRAER MENSAJE DE ERROR
     # ======================================================
 
     @staticmethod
@@ -246,17 +232,55 @@ RULES:
         self._ensure_configured()
 
 
-        clean_sdp = (
+        # ==================================================
+        # IMPORTANTE
+        # ==================================================
+        #
+        # NO debemos modificar el SDP.
+        #
+        # Especialmente:
+        #
+        # NO hacer:
+        #
+        # sdp = sdp.strip()
+        #
+        # porque elimina los CRLF finales requeridos
+        # por el formato SDP.
+        #
+        # ==================================================
+
+
+        if (
+            not isinstance(
+                sdp,
+                str
+            )
+        ):
+
+            raise RealtimeServiceException(
+                (
+                    "La oferta WebRTC recibida "
+                    "no es válida."
+                ),
+                400
+            )
+
+
+        # ==================================================
+        # COPIA SOLO PARA VALIDACIÓN
+        # ==================================================
+        #
+        # Esta versión NO se envía a OpenAI.
+        #
+        # ==================================================
+
+        validation_sdp = (
             sdp.strip()
         )
 
 
-        # ==================================================
-        # VALIDAR SDP
-        # ==================================================
-
         if (
-            not clean_sdp
+            not validation_sdp
         ):
 
             raise RealtimeServiceException(
@@ -269,7 +293,7 @@ RULES:
 
 
         if (
-            not clean_sdp.startswith(
+            not validation_sdp.startswith(
                 "v=0"
             )
         ):
@@ -283,20 +307,45 @@ RULES:
             )
 
 
+        # ==================================================
+        # LOG DE DIAGNÓSTICO SEGURO
+        # ==================================================
+        #
+        # No mostramos el SDP completo.
+        # Solo longitud y terminación.
+        #
+        # ==================================================
+
+        logger.info(
+            (
+                "SDP recibido. "
+                "Longitud=%s "
+                "TerminaCRLF=%s"
+            ),
+            len(sdp),
+            sdp.endswith(
+                "\r\n"
+            )
+        )
+
+
         try:
 
             # =================================================
             # SDK OFICIAL OPENAI
             # =================================================
             #
-            # El SDK se encarga de:
+            # MUY IMPORTANTE:
             #
-            # multipart/form-data
-            # application/sdp
-            # application/json
-            # boundary
+            # enviamos `sdp`
             #
-            # No hacemos multipart manualmente.
+            # NO:
+            #
+            # validation_sdp
+            #
+            # porque necesitamos conservar exactamente
+            # los saltos de línea del navegador.
+            #
             # =================================================
 
             response = (
@@ -305,9 +354,7 @@ RULES:
                 .calls
                 .create(
 
-                    sdp=(
-                        clean_sdp
-                    ),
+                    sdp=sdp,
 
                     session=(
                         self._session_config()
@@ -322,7 +369,7 @@ RULES:
             # =================================================
 
             answer_sdp = (
-                response.text.strip()
+                response.text
             )
 
 
@@ -339,8 +386,17 @@ RULES:
                 )
 
 
+            # =================================================
+            # VALIDAR SIN MODIFICAR RESPUESTA
+            # =================================================
+
+            validation_answer = (
+                answer_sdp.strip()
+            )
+
+
             if (
-                not answer_sdp.startswith(
+                not validation_answer.startswith(
                     "v=0"
                 )
             ):
@@ -348,9 +404,8 @@ RULES:
                 logger.error(
                     (
                         "OpenAI devolvió contenido "
-                        "que no parece SDP: %s"
-                    ),
-                    answer_sdp[:1000]
+                        "que no parece SDP."
+                    )
                 )
 
 
@@ -366,11 +421,25 @@ RULES:
             logger.info(
                 (
                     "Sesión WebRTC creada "
-                    "correctamente con modelo %s."
+                    "correctamente. "
+                    "Modelo=%s "
+                    "LongitudSDPRespuesta=%s"
                 ),
-                self.settings.realtime_model
+                self.settings.realtime_model,
+                len(
+                    answer_sdp
+                )
             )
 
+
+            # =================================================
+            # IMPORTANTE
+            # =================================================
+            #
+            # Devolvemos también el SDP original de OpenAI,
+            # sin hacer .strip().
+            #
+            # =================================================
 
             return answer_sdp
 
@@ -425,7 +494,7 @@ RULES:
 
 
         # ==================================================
-        # API KEY
+        # AUTENTICACIÓN
         # ==================================================
 
         except AuthenticationError as error:
@@ -478,7 +547,7 @@ RULES:
 
 
         # ==================================================
-        # RATE LIMIT / CUOTA
+        # RATE LIMIT
         # ==================================================
 
         except RateLimitError as error:
@@ -529,17 +598,10 @@ RULES:
 
 
         # ==================================================
-        # OTRO ERROR HTTP OPENAI
+        # OTRO ERROR HTTP
         # ==================================================
 
         except APIStatusError as error:
-
-            openai_message = (
-                self._get_error_message(
-                    error
-                )
-            )
-
 
             logger.error(
                 (
@@ -558,7 +620,9 @@ RULES:
                     "request_id",
                     None
                 ),
-                openai_message
+                self._get_error_message(
+                    error
+                )
             )
 
 
